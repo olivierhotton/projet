@@ -1,5 +1,8 @@
 #include "Gpx.h"
+#include "Geojson.h"
 using namespace gpx_ns;
+using namespace geojson_ns;
+
 
 
 
@@ -71,7 +74,7 @@ Gpx lireFichier(const std::string& str){
         TrkSeg seg;
         TrkPt p;
 
-         double coord[3];
+         long double coord[3];
         while(getline(fs, ligne))
         {
             //trk
@@ -162,8 +165,68 @@ Gpx lireFichier(const std::string& str){
 
 
     fs.close();
-g.afficher(std::cout);
+//g.afficher(std::cout);
     return g;
 }
 
+
+
+void toGeoJSON(const Gpx& g){
+
+   // int i,j,k;
+// récupérer mes tracks g.tracks()
+    std::vector<Trk> tr;
+    std::vector<TrkSeg> trs;
+    std::vector<TrkPt> trp;
+   // TrkSeg seg;
+    Position p;
+    LineString l= LineString();
+    MultiLineString mls = MultiLineString();
+         FeatureCollection fc = FeatureCollection();
+        Feature f = Feature();
+    tr = g.tracks();
+
+
+    //pour chaque track
+    for (auto i: tr){
+        //récupérer le nom de la track    g.getTrack(0).nom()
+   // std::cout << "Track\n";
+        //récupérer les segments        g.getTrack(0).segments()
+
+
+        trs = i.segments();
+        //récupérer un segment     g.getTrack(0).getSegment(0)
+        for (auto j: trs){
+            //récupérer les points du segment     g.getTrack(0).getSegment(0).points()
+  //  std::cout << "Segment\n";
+
+            trp = j.points();
+
+
+
+            //récupérer un point du segment     g.getTrack(0).getSegment(0).getPoint(0)
+            for (auto k: trp){
+
+                l.addPosition(Position(k.lattitude(),k.longitude(),k.altitude()));
+            }
+            //std::cout << l;
+            mls.addLineString(l);
+        }
+       // std::cout << mls;
+       /* property pr;
+        pr.d_name ="";
+        pr.d_value ="";
+
+        f.addProperty(pr);*/
+        f.setMember(&mls);
+       // std::cout << f;
+      fc.addFeature(&f);
+    }
+
+
+
+   //return GeoJson(&fc);
+createFile("test_conversion.geojson",GeoJson(&fc));
+
+}
 
