@@ -10,10 +10,12 @@ using namespace manip_ns;
 int main()
 {
 //Manipulateur::testAlgo();
-Manipulateur::testGraphe();
+//Manipulateur::testGraphe();
 //Manipulateur::testGPX();
 
-   // Manipulateur::testGeoJSON();
+    Manipulateur::testGeoJSON();
+
+    //Position::test();
     return 0;
 }
 

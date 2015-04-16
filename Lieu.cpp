@@ -27,10 +27,27 @@ bool Lieu::operator==(const Lieu& l) const
     {
        ost << "[" ;
        Noeud::print(ost) ;
-       ost << "/altitude : "<< d_altitude << "/lattitude : "<< d_lattitude << "/longitude :" << d_longitude << "/nom :" << d_nom << "]"   ;
+       ost << "/lattitude : "<< d_lattitude << " /longitude :" << d_longitude << "/altitude : "<< d_altitude<< " /nom :" << d_nom << "]"   ;
 
     }
 
+
+    bool Lieu::operator <(const Lieu& l) const{
+
+        if (d_lattitude < l.d_lattitude) return true;
+        else
+            if (d_lattitude == l.d_lattitude){
+                if (d_longitude < l.d_longitude) return true;
+                    else
+                    if (d_longitude == l.d_longitude){
+                        return d_altitude < l.d_altitude;
+                    }
+                else return false;
+
+            }
+        else return false;
+
+    }
 
 
     double Lieu::get_lattitude() const { return d_lattitude ;  }
@@ -47,4 +64,12 @@ bool Lieu::operator==(const Lieu& l) const
     }
 
 
+void Lieu::test(){
 
+    Lieu l1 = Lieu();
+    std::cout << " L1: "<< l1 << std::endl;
+    Lieu l2 = Lieu(l1.d_idNoeud,l1.d_lattitude ,l1.d_longitude,l1.d_altitude+1);
+      std::cout << " L2: " << l2 << std::endl;
+      if (l1<l2) std::cout <<  "<"  <<std::endl;
+
+}

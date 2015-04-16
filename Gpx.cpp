@@ -17,13 +17,41 @@ std::ostream& gpx_ns::operator <<(std::ostream& o ,const TrkPt& p){
     p.afficher(o);
     return o ;
 }
+
+bool TrkPt::operator <(const TrkPt& p) const{
+
+    if (d_lattitude < p.d_lattitude) return true;
+    else
+        if (d_lattitude == p.d_lattitude){
+            if (d_longitude < p.d_longitude) return true;
+                else
+                if (d_longitude == p.d_longitude){
+                    return d_elevation < p.d_elevation;
+                }
+            else return false;
+
+        }
+    else return false;
+
+}
+
+bool TrkPt::operator ==(const TrkPt& p) const{
+    if(d_lattitude != p.d_lattitude) return false;
+    if(d_longitude != p.d_longitude) return false;
+    if(d_elevation != p.d_elevation) return false;
+    return true;
+}
+
+bool TrkPt::operator !=(const TrkPt& p) const{ return !(*this == p);}
+
 void TrkPt::test() {
 
 
 TrkPt p = TrkPt(47.907214,7.217248,289);
-TrkPt pp = TrkPt(p);
+TrkPt pp = TrkPt(p.d_lattitude,p.d_longitude,p.d_elevation);
 
-std::cout << pp;
+if (p<pp) std::cout <<"inferieur"<<std::endl;
+
 }
 
 // Segment
@@ -131,6 +159,7 @@ g.afficher(o);
     return o;
 
 }
+
 
 void Gpx::test(){
     std::vector<TrkPt> v,w;

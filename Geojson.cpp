@@ -19,6 +19,8 @@ void GeoJson::print(std::ostream& o) const{
     if (d_member != nullptr) d_member->print(o);
 }
 
+GJObject* GeoJson::member()const{return d_member;}
+
 void GeoJson::test(){
     FeatureCollection fc = FeatureCollection();
 
@@ -34,9 +36,9 @@ void GeoJson::test(){
 
     LineString l1 = LineString(std::vector<Position>(1,Position(1,2.5,3)));
     LineString l2 = LineString(std::vector<Position>(1,Position(59.5,753)));
-    MultiLineString mls = MultiLineString();
-    mls.addLineString(l1);
-    mls.addLineString(l2);
+    //MultiLineString mls = MultiLineString();
+    //mls.addLineString(l1);
+   // mls.addLineString(l2);
 
 
 
@@ -44,11 +46,11 @@ void GeoJson::test(){
     Property p3 = Property();
     v.push_back(p3);
     v.push_back(p4);
-    Feature f2 =  Feature("Feature",v,&mls);
+    //Feature f2 =  Feature("Feature",v,&mls);
 
 
     fc.addFeature(&f1);
-    fc.addFeature(&f2);
+    //fc.addFeature(&f2);
 
 
     std::cout << GeoJson(&f1);
@@ -75,7 +77,7 @@ std::ostream& geojson_ns::operator <<(std::ostream& o, const Geometry& g){
 }
 void Geometry::test(){
 
-    std::cout <<  Geometry("test");
+    //std::cout <<  Geometry("test");
 
 }
 
@@ -89,6 +91,34 @@ double Position::lattitude()const{ return d_lattitude;}
 double Position::longitude()const{ return d_longitude;}
 double Position::elevation()const{ return d_elevation;}
 void Position::print(std::ostream &o) const { o << "["  << std::setprecision(8) <<longitude() << ", "<< lattitude() << ", "  <<elevation() << "]"; }
+
+
+bool Position::operator <(const Position& p) const{
+
+    if (d_longitude < p.d_longitude) return true;
+    else
+        if (d_longitude == p.d_longitude){
+            if (d_lattitude < p.d_lattitude) return true;
+                else
+                if (d_lattitude == p.d_lattitude){
+                    return d_elevation < p.d_elevation;
+                }
+            else return false;
+
+        }
+    else return false;
+
+}
+
+bool Position::operator ==(const Position& p) const{
+    if(d_lattitude != p.d_lattitude) return false;
+    if(d_longitude != p.d_longitude) return false;
+    if(d_elevation != p.d_elevation) return false;
+    return true;
+}
+
+bool Position::operator !=(const Position& p) const{ return !(*this == p);}
+
 
 std::ostream& geojson_ns::operator<<(std::ostream& o ,const Position &p){
     p.print(o);
@@ -108,13 +138,12 @@ std::ostream& geojson_ns::operator <<(std::ostream& o ,const std::vector<Positio
 }
 
 void Position::test(){
-    std::vector<Position> v;
-    Position p =Position(Position(47.907107,7.216957,290));
-    v.push_back(p);
-    v.push_back(Position(47.907175,7.217138,289));
+    Position p =Position(47.907107,7.216957,290);
 
-    std::cout << v;
-
+    Position pp = Position(p.d_lattitude,p.d_longitude+1,p.d_elevation);
+    if (p < pp) std::cout << p << " inferieur a " <<pp<<std::endl;
+    if (p == pp) std::cout << p << " egal a " <<pp<<std::endl;
+    if (p != pp) std::cout << p << " different de " <<pp<<std::endl;
 }
 
 //Point
@@ -128,6 +157,9 @@ std::ostream& geojson_ns::operator <<(std::ostream& o ,const Point& p){
     return o ;
 }
 
+std::vector<Position> Point::positions() const{
+    return std::vector<Position>(1,d_pos);
+}
 
 void Point::test(){
     Point p = Point(Position(47.907107,7.216957,290));
@@ -140,7 +172,12 @@ void Point::test(){
 MultiPoint::MultiPoint(const std::vector<Position> &v):Geometry("MultiPoint"),d_positions(v){}
 MultiPoint::MultiPoint(const MultiPoint &mp):Geometry("MultiPoint"),d_positions(mp.d_positions){}
 void MultiPoint::addPosition(const Position &p){d_positions.push_back(p); }
-std::vector<Position> MultiPoint::positions() const {return d_positions;}
+std::vector<Position> MultiPoint::positions() const {
+
+    return d_positions;
+
+
+}
 Position MultiPoint::getPosition(int i) const{ return d_positions[i];}
 void MultiPoint::print(std::ostream& o)const {
     signed int nb=d_positions.size() -1;
@@ -154,7 +191,6 @@ void MultiPoint::print(std::ostream& o)const {
     }
     o << " ]\n}\n";
 }
-
 
 std::ostream& geojson_ns::operator <<(std::ostream& o, const MultiPoint& mp){
     mp.print(o);
@@ -200,7 +236,7 @@ void LineString::test(){
     l.addPosition(Position(10,72,300));
     std::cout << l;
 }
-
+//std::vector<Position> LineString::positions()const override{ return std::vector<Position>();}
 
 // MultiLineString
 MultiLineString::MultiLineString(const std::vector<LineString>& ls):Geometry("MultiLineString"),d_linestrings(ls){}
@@ -225,15 +261,35 @@ std::ostream& geojson_ns::operator <<(std::ostream& o, const MultiLineString& ml
     mls.print(o);
     return o;
 }
-void MultiLineString::test(){
 
+std::vector<Position> MultiLineString::positions()const {
+    std::vector<Position> tmp;
+    std::vector<Position> pos;
+    for(auto i : d_linestrings){ // pr chaque obj lineString
+
+        tmp = i.positions();//recupérer le vecteur de positions
+
+        for(auto j: tmp) //recupérer chaque position du vecteur
+        {
+         pos.push_back(j);
+        }
+
+    }
+
+
+
+    return pos;
+
+}
+void MultiLineString::test(){
+/*
     LineString l1 = LineString(std::vector<Position>(1,Position(1,2.5,3)));
     LineString l2 = LineString(std::vector<Position>(1,Position(59.5,753)));
-    MultiLineString mls = MultiLineString();
-    mls.addLineString(l1);
+    //MultiLineString mls = MultiLineString();
+    //mls.addLineString(l1);
     mls.addLineString(l2);
     std::cout << mls;
-
+*/
 
 }
 
@@ -259,7 +315,25 @@ void GeometryCollection::print(std::ostream& o) const {
     o << " \n ]\n}\n";
 
 }
+std::vector<Position> GeometryCollection::positions()const {
+    std::vector<Position> tmp;
+    std::vector<Position> pos;
+    for(auto i : d_collection){ // pr chaque obj geometry
 
+        tmp = i->positions();//recupérer le vecteur de positions
+
+        for(auto j: tmp) //recupérer chaque position du vecteur
+        {
+         pos.push_back(j);
+        }
+
+    }
+
+
+
+    return pos;
+
+}
 std::ostream& geojson_ns::operator<<(std::ostream& o, const GeometryCollection& gc){
     gc.print(o);
     return o;
@@ -267,16 +341,16 @@ std::ostream& geojson_ns::operator<<(std::ostream& o, const GeometryCollection& 
 }
 
 void GeometryCollection::test() {
-    GeometryCollection g = GeometryCollection();
+   /* GeometryCollection g = GeometryCollection();
 
     LineString l1 = LineString(std::vector<Position>(1,Position(1,2.5,3)));
     LineString l2 = LineString(std::vector<Position>(1,Position(59.5,753)));
-    MultiLineString mls = MultiLineString();
+    //MultiLineString mls = MultiLineString();
     Point p = Point(Position(1,2.5,3));
     MultiPoint mp = MultiPoint(std::vector<Position>(1,Position(1,2.5,3)));
     mp.addPosition(Position(10,72,300));
 
-    mls.addLineString(l1);
+    //mls.addLineString(l1);
     mls.addLineString(l2);
     g.addGeometry(&mls);
 
@@ -284,7 +358,7 @@ void GeometryCollection::test() {
     g.addGeometry(&p);
     g.addGeometry(&l2);
     g.addGeometry(&mp);
-    std::cout << g;
+    std::cout << g;*/
 }
 
 
@@ -328,6 +402,8 @@ void Feature::print(std::ostream &o) const{
               f.print(std::cout);
     }
 
+std::vector<Position> Feature::positions()const { return d_member->positions();}
+
               //FeatureCollection
         FeatureCollection::FeatureCollection(const std::string &s,  const std::vector<Feature *> &v):GJObject(s),d_collection(v){}
         FeatureCollection::FeatureCollection(const FeatureCollection &fc):GJObject(fc.d_name),d_collection(fc.d_collection){}
@@ -344,14 +420,29 @@ void Feature::print(std::ostream &o) const{
             d_collection[nb]->print(o);
             o << "\n}\n]\n}\n";
         }
+std::vector<Position> FeatureCollection::positions()const {
+    std::vector<Position> tmp;
+    std::vector<Position> pos;
 
+    for(auto i:d_collection) //pour chaque feature
+    {
+        //recuperer le vecteur de position
+        tmp = i->positions();
+        //ajouter chaque position du vecteur tmp dans le vecteur pos
+        for(auto j:tmp) pos.push_back(j);
+
+    }
+    return pos;
+
+
+}
         std::ostream& geojson_ns::operator<<(std::ostream& o, const FeatureCollection& fc){
             fc.print(o);
             return o;
         }
 
         void FeatureCollection::test() {
-            FeatureCollection fc = FeatureCollection();
+          /*  FeatureCollection fc = FeatureCollection();
             MultiPoint mp = MultiPoint(std::vector<Position>(1,Position(1,2.5,3)));
             mp.addPosition(Position(10,72,300));
             mp.addPosition(Position(1,987,345));
@@ -359,14 +450,14 @@ void Feature::print(std::ostream &o) const{
             Feature f1 =  Feature("Feature",v,&mp);
             LineString l1 = LineString(std::vector<Position>(1,Position(1,2.5,3)));
             LineString l2 = LineString(std::vector<Position>(1,Position(59.5,753)));
-            MultiLineString mls = MultiLineString();
-            mls.addLineString(l1);
-            mls.addLineString(l2);
+            //MultiLineString mls = MultiLineString();
+            //mls.addLineString(l1);
+           // mls.addLineString(l2);
             Feature f2 =  Feature("Feature",v,&mls);
             fc.addFeature(&f1);
             fc.addFeature(&f2);
             std::cout << fc;
-
+*/
 
         }
 

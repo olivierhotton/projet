@@ -7,19 +7,13 @@ using namespace std ;
 
 
 
-Graphe::Graphe(vector<Arete*> const& tableauAretes) {
-    for(unsigned int i=0;i<tableauAretes.size();i++)
-
-        d_tableauAretes.push_back(tableauAretes[i]) ;
-
-}
+Graphe::Graphe(vector<Arete*> const& tableauAretes, vector<Noeud*> const& tabNoeuds):d_tableauAretes(tableauAretes),d_tabNoeuds(tabNoeuds) {}
 
 Graphe::~Graphe() {}
 
 
 bool Graphe::operator==(const Graphe& g )   const {
-   // int j=0 ;
-        for(unsigned int i=0;i<d_tableauAretes.size();i++) {
+         for(unsigned int i=0;i<d_tableauAretes.size();i++) {
          if 	(d_tableauAretes[i]!=g.d_tableauAretes[i]) return false ;
          }
           return true ;

@@ -18,11 +18,36 @@ private:
     std::string d_value;
 
 };
+
+/*
+ * @class Position
+ * */
+class Position{
+
+public:
+    Position(double lattitude=.0, double longitude=.0,double elevation=.0);
+    Position(const Position& p);
+    double lattitude() const;
+    double longitude() const;
+    double elevation() const;
+    void print(std::ostream& o) const;
+    static void test();
+    bool operator <(const Position& p) const; //tri par ordre croissant longitude, lattitude,altitude
+    bool operator ==(const Position& p) const;
+    bool operator !=(const Position& p) const;
+private :
+    double d_lattitude,d_longitude,d_elevation;
+};
+std::ostream& operator<<(std::ostream&  o, const Position &p);
+std::ostream& operator<<(std::ostream&  o, const std::vector<Position> &v);
+
+
 class GJObject{
 public:
     GJObject(const std::string& s="");
     virtual void print(std::ostream& o) const =0 ;
     std::string name() const;
+    virtual std::vector<Position> positions() const=0;
 protected :
     std::string d_name;
 
@@ -35,6 +60,7 @@ public:
     void print(std::ostream& o) const;
     static void test();
     std::string content() const;
+    GJObject* member() const;
 private:
 
 GJObject* d_member;
@@ -53,6 +79,7 @@ class Geometry : public GJObject{
 public:
     Geometry(const std::string& s="");
     virtual void print(std::ostream& o) const override ;
+    virtual std::vector<Position> positions()const =0;
     static void test();
 
 };
@@ -75,7 +102,7 @@ public:
     std::vector<Geometry *> geometries() const;
     void print(std::ostream& o) const;
     static void test();
-
+    std::vector<Position> positions()const override;
 private :
     std::vector<Geometry*> d_collection;
 };
@@ -84,24 +111,6 @@ std::ostream& operator<<(std::ostream& o, const GeometryCollection& gc);
 
 
 
-/*
- * @class Position
- * */
-class Position{
-
-public:
-    Position(double lattitude=.0, double longitude=.0,double elevation=.0);
-    Position(const Position& p);
-    double lattitude() const;
-    double longitude() const;
-    double elevation() const;
-    void print(std::ostream& o) const;
-    static void test();
-private :
-    double d_lattitude,d_longitude,d_elevation;
-};
-std::ostream& operator<<(std::ostream&  o, const Position &p);
-std::ostream& operator<<(std::ostream&  o, const std::vector<Position> &v);
 
 
 /*
@@ -112,6 +121,7 @@ class Point : public Geometry{
 public:
     Point(const Position& pos=Position());
     Point(const Point& p);
+    std::vector<Position> positions()const override;
     void print(std::ostream& o) const override ;
     static void test();
 private :
@@ -129,7 +139,7 @@ public:
     MultiPoint(const MultiPoint &mp);
     void addPosition(const Position& p=Position());
     Position getPosition(int i) const;
-    std::vector<Position> positions() const;
+    std::vector<Position> positions() const override;
     void print(std::ostream& o) const override;
     static void test();
 
@@ -149,7 +159,7 @@ public:
     LineString(const LineString &ls);
     void addPosition(const Position& p=Position());
     Position getPosition(int i) const;
-    std::vector<Position> positions() const;
+    std::vector<Position> positions() const override;
     void print(std::ostream& o) const override;
     static void test();
 
@@ -173,6 +183,7 @@ public:
     LineString getLineString(int i) const;
     std::vector<LineString> linestrings() const;
     void print(std::ostream& o) const override;
+    std::vector<Position> positions()const override;
     static void test();
 
 private:
@@ -198,6 +209,7 @@ public:
     void addProperty(const Property& p);
     void print(std::ostream& o) const ;
     static void test();
+ std::vector<Position> positions()const override;
 private:
    // std::string d_name;
     std::vector<Property> d_properties;
@@ -217,6 +229,8 @@ public:
     std::vector<Feature *> features() const;
     void print(std::ostream& o) const;
     static void test();
+    std::vector<Position> positions()const override;
+
 private:
 
     std::vector<Feature* > d_collection;

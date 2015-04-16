@@ -21,14 +21,6 @@ public:
     bool operator==(const Arete& a) const;
     bool operator!=(const Arete& a) const;
 
-    //virtual double test()=0;
-    //virtual double distance()=0;
-  /*  virtual double pente()=0;
-;
-    virtual double denivele()=0;
-    virtual double denivele_montant()=0;
-    virtual double duree()=0;
-*/
 
 protected :
 

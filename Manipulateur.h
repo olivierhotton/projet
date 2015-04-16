@@ -37,6 +37,8 @@ namespace manip_ns{
             static Gpx lireGPX(const std::string& str); // lit un fichier GPX et retourne un objet gpx
             static std::string recupererChampGPX(std::string& s,const std::string& tag);
 
+            static std::vector<Position> positionAsc(const GeoJson& gj);
+            static std::vector<Lieu> lieux(); //retourne la liste triée des sommets du graphe
             static void toGeoJSON(const Gpx& g); //devrait retourner un geoJSON mais plante
             static void testGraphe();
             static void testGPX();

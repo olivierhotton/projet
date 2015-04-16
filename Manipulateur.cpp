@@ -171,12 +171,12 @@ Gpx Manipulateur::lireGPX(const std::string& str){
 
 void Manipulateur::toGeoJSON(const Gpx& g){
 
-   // int i,j,k;
-// récupérer mes tracks g.tracks()
+
+
     std::vector<Trk> tr;
     std::vector<TrkSeg> trs;
     std::vector<TrkPt> trp;
-   // TrkSeg seg;
+
     Position p;
     LineString l= LineString();
     MultiLineString mls = MultiLineString();
@@ -187,15 +187,15 @@ void Manipulateur::toGeoJSON(const Gpx& g){
 
     //pour chaque track
     for (auto i: tr){
-        //récupérer le nom de la track    g.getTrack(0).nom()
-   // std::cout << "Track\n";
-        //récupérer les segments        g.getTrack(0).segments()
+        //récupérer le nom de la track
+
+        //récupérer les segments
 
 
         trs = i.segments();
-        //récupérer un segment     g.getTrack(0).getSegment(0)
+        //récupérer un segment
         for (auto j: trs){
-            //récupérer les points du segment     g.getTrack(0).getSegment(0).points()
+            //récupérer les points du segment
   //  std::cout << "Segment\n";
 
             trp = j.points();
@@ -221,11 +221,59 @@ void Manipulateur::toGeoJSON(const Gpx& g){
       fc.addFeature(&f);
     }
 
-//std::cout << GeoJson(&fc);
-//   return GeoJson(&fc);
-createFile("test_conversion.geojson",GeoJson(&fc));
+GeoJson gj = GeoJson(&fc);
+createFile("test_conversion.geojson",gj);
+
+std::vector<Position> pos = Manipulateur::positionAsc(gj);
+std::cout << pos;
+}
+
+std::vector<Position> Manipulateur::positionAsc(const GeoJson &gj){
+
+
+    std::vector<Position> tmp;
+    std::vector<Position> pos;
+    int nb=0;
+    pos.push_back(nb);
+
+    tmp = gj.member()->positions();
+
+    //for (auto i:gj.member()) //pour l'objet contenu dans le fichier GeoJSON
+    {
+ /*       for (auto j: i->) //pour chaque segment
+        {
+//            for (auto k :j.points()) //pour chaque point
+//     {
+//                tmp.push_back(k);
+           }
+
+      }*/
+    }
+
+//    //on trie les points ordre croissant
+//    sort(tmp.begin(),tmp.end());
+
+
+//    //on supprime les doublons
+
+
+//    for(int i=1;i<= (nb=tmp.size());i++)
+//    {
+//        if(tmp[i-1] != tmp[i]) // inutile de garder les doublons
+//        {
+//            points.push_back(tmp[i-1]);
+//        }
+//    }
+//    if(tmp[nb-1] != tmp[nb]) // dernier element
+//    {
+//        points.push_back(tmp[nb]);
+//    }
+
+
+    return tmp;
 
 }
+
 
 void Manipulateur::testGraphe()
 {
@@ -270,21 +318,7 @@ void Manipulateur::testGraphe()
 }
 void Manipulateur::testGPX(){
 
-    //test point GPX
-    //   TrkPt::test();
-    //std::cout << TrkPt();
-
-    //test segment GPX
-    //
-    //TrkSeg::test();
-    //test track GPX
-//    std::cout << TrkSeg();
-    //  Trk::test();
-//    std::cout << Trk();
-    //test  GPX
-    //  Gpx::test();
-//std::cout <<Gpx();
-
+Gpx g=lireGPX("C:/Users/oliv/Downloads/gpx/test.gpx");
 
 
 }
@@ -325,11 +359,13 @@ void Manipulateur::testGeoJSON(){
 
     //   gpx_ns::createFile("C:/Users/oliv/Downloads/gpx/testEciture.gpx",g);
 //
-    Gpx g = Manipulateur::lireGPX("C:/Users/oliv/Downloads/gpx/quart.gpx");
+    Gpx g = Manipulateur::lireGPX("C:/Users/oliv/Downloads/gpx/test.gpx");
 
 //std::cout << g;
 //     Manipulateur::toGeoJSON(g);
+
     Manipulateur::toGeoJSON(g);
+
 
 }
 
@@ -651,4 +687,5 @@ void Manipulateur::testAlgo(){
         }
         delete(g);
 }
+
 

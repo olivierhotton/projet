@@ -17,7 +17,7 @@ class Graphe{
 
     public :
 
-          Graphe(vector<Arete*> const&);
+          Graphe(vector<Arete*> const& tableauAretes, vector<Noeud*> const& tabNoeuds);
 
           bool operator!=(const Graphe& g )   const;
          bool operator==(const Graphe& g )   const;
@@ -27,7 +27,7 @@ class Graphe{
 
     private:
         vector<Arete*> d_tableauAretes;
-
+        vector<Noeud*> d_tabNoeuds;
 
 };
 

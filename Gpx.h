@@ -24,8 +24,13 @@ public:
     double lattitude() const;
     double longitude() const;
     double altitude() const;
+    bool operator <(const TrkPt& p) const;
+    bool operator ==(const TrkPt& p) const;
+    bool operator !=(const TrkPt& p) const;
     void afficher(std::ostream& o) const;
     static void test() ;
+
+
 private:
     double d_lattitude,d_longitude,d_elevation;
 
@@ -47,6 +52,7 @@ public:
     void ajouterPoint(const TrkPt& p);
     TrkPt getPoint(int i) const;
     std::vector<TrkPt> points() const;
+
     void afficher(std::ostream& o) const;
     static void test() ;
 

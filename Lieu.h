@@ -17,14 +17,18 @@ class Lieu : public Noeud  {
 
     public :
 
-     Lieu(int const&,double const&,double const&,double const&,string const& name="");
+     Lieu(int const& idNoeud=0, double  const& lattitude=.0, double const& longitude=.0, double const&   altitude=.0, string const&  name="");
 
 
 
      Lieu& operator=(const Lieu& ) = default;
      bool operator!=(const Lieu& n)   const;
      bool operator==(const Lieu& n)   const;
-    void print(std::ostream& ost) const;
+     bool operator<(const Lieu& l) const;
+
+     void print(std::ostream& ost) const;
+
+
 
 
      double get_lattitude() const override ;
@@ -33,7 +37,7 @@ class Lieu : public Noeud  {
      string get_nom() const;
 
      ~Lieu() ;
-
+static void test();
     private:
         double  d_lattitude;
         double  d_longitude;
