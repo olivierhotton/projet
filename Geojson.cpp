@@ -20,6 +20,8 @@ void GeoJson::print(std::ostream& o) const{
 }
 
 GJObject* GeoJson::member()const{return d_member;}
+//std::vector<Feature*> FeatureCollection::collection() const{ return d_collection;}
+
 
 void GeoJson::test(){
     FeatureCollection fc = FeatureCollection();
@@ -236,7 +238,7 @@ void LineString::test(){
     l.addPosition(Position(10,72,300));
     std::cout << l;
 }
-//std::vector<Position> LineString::positions()const override{ return std::vector<Position>();}
+
 
 // MultiLineString
 MultiLineString::MultiLineString(const std::vector<LineString>& ls):Geometry("MultiLineString"),d_linestrings(ls){}
@@ -339,6 +341,8 @@ std::ostream& geojson_ns::operator<<(std::ostream& o, const GeometryCollection& 
     return o;
 
 }
+
+//std::vector<Geometry*> GeometryCollection::collection() const{ return d_collection;}
 
 void GeometryCollection::test() {
    /* GeometryCollection g = GeometryCollection();

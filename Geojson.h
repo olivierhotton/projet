@@ -48,6 +48,7 @@ public:
     virtual void print(std::ostream& o) const =0 ;
     std::string name() const;
     virtual std::vector<Position> positions() const=0;
+    //virtual std::vector<Feature>& features() const =0;
 protected :
     std::string d_name;
 
@@ -61,6 +62,7 @@ public:
     static void test();
     std::string content() const;
     GJObject* member() const;
+//virtual std::vector<Feature>& features() const =0;
 private:
 
 GJObject* d_member;
@@ -103,6 +105,8 @@ public:
     void print(std::ostream& o) const;
     static void test();
     std::vector<Position> positions()const override;
+  //  std::vector<Geometry*> collection() const;
+
 private :
     std::vector<Geometry*> d_collection;
 };
@@ -226,10 +230,11 @@ public:
     FeatureCollection(const FeatureCollection &fc);
     void addFeature( Feature *f= nullptr);
     Feature* getFeature(int i) const;
-    std::vector<Feature *> features() const;
+    std::vector<Feature*> features() const;
     void print(std::ostream& o) const;
     static void test();
     std::vector<Position> positions()const override;
+    //std::vector<Feature*> collection() const;
 
 private:
 

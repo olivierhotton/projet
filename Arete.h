@@ -20,7 +20,8 @@ public:
     void print(ostream& o) const;
     bool operator==(const Arete& a) const;
     bool operator!=(const Arete& a) const;
-
+    Noeud* getNoeud1() const;
+    Noeud* getNoeud2() const;
 
 protected :
 

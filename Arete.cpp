@@ -22,3 +22,6 @@ ostream& operator<<(ostream& o,const Arete& a){
 a.print(o);
 return o;
 }
+
+Noeud* Arete::getNoeud1() const{return d_n1;}
+Noeud* Arete::getNoeud2() const{return d_n2;}

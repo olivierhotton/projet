@@ -31,6 +31,10 @@
       return d_idNoeud;
      }
 
+    void Noeud::set_id(int i)
+     {
+       d_idNoeud = i;
+     }
     std::ostream& operator<<(std::ostream& ost, const Noeud& n)
     {
       n.print(ost);

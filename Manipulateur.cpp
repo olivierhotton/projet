@@ -6,6 +6,7 @@ using namespace manip_ns;
 using namespace std;
 
 Manipulateur::Manipulateur(Graphe* g):monGraphe(g){}
+//Manipulateur::Manipulateur():monGraphe(nullptr){}
 
 /*
  * @function récupérer champ gpx
@@ -58,7 +59,7 @@ std::string Manipulateur::recupererChampGPX(std::string& ligne,const std::string
 
 /**
  * @fn lireGPX
- * @brief lit un fichier GPX
+ * @brief lit un fichier GPX et met a jour le vecteur d'arete
  * @param str chaîne de caractères représentant le chemin d'accès au fichier GPX
  * @return    un objet gpx
  */
@@ -167,17 +168,167 @@ Gpx Manipulateur::lireGPX(const std::string& str){
     return g;
 }
 
+/* renvoit un vecteur de positions trié sans doublon
+ *
+ * */
+std::vector<Position> Manipulateur::positionAsc(const GeoJson &gj){
 
+
+    std::vector<Position> tmp;
+    std::vector<Position> pos;
+    int nb;
+
+
+    tmp = gj.member()->positions();
+
+
+    //on trie les points ordre croissant
+    sort(tmp.begin(),tmp.end());
+
+
+//    //on supprime les doublons
+
+
+    for(int i=1;i<= (nb=tmp.size()-1);i++)
+    {
+        if(tmp[i-1] != tmp[i]) // inutile de garder les doublons
+        {
+            pos.push_back(tmp[i-1]);
+        }
+    }
+    if(tmp[nb-1] != tmp[nb]) // dernier element
+    {
+        pos.push_back(tmp[nb]);
+    }
+
+
+    return pos;
+
+}
+
+/*
+ * trier lieux
+ * */
+
+/* renvoit un vecteur de positions trié sans doublon
+ *
+ * */
+void Manipulateur::trierLieux(){
+
+    std::cout << "gr ->" << monGraphe->noeuds().size() << " noeuds avant le tri" << std::endl;
+    std::vector<Lieu> tmp;
+
+    std::vector<Noeud*> pos;
+
+
+    int nb;
+
+
+
+    for (unsigned int i=0; i< monGraphe->noeuds().size();i++){
+        //tmp.push_back(monGraphe->getNoeud(i));
+       tmp.push_back(Lieu(monGraphe->getNoeud(i)->get_id(),monGraphe->getNoeud(i)->get_lattitude(),monGraphe->getNoeud(i)->get_longitude(),monGraphe->getNoeud(i)->get_altitude(),""));
+
+    }
+    //vider le tableau de noeuds du graphe
+    for (unsigned int i=0; i< monGraphe->noeuds().size();i++){
+        delete monGraphe->getNoeud(i);
+
+    }
+    monGraphe->noeuds().clear();
+
+    //on trie les lieux ordre croissant
+
+    sort(tmp.begin(),tmp.end());
+    for (auto f : tmp)  std::cout << f<< std::endl;
+
+    //on supprime les doublons
+    std::cout << "n = " << tmp.size()-1 << std::endl;
+nb=tmp.size();
+
+if(nb> 0){
+monGraphe->addNoeud(new Lieu(0,tmp[0].get_lattitude(),tmp[0].get_longitude(),tmp[0].get_altitude(),tmp[0].get_nom()));
+
+    for(int i=1;i< nb-1;i++)
+    {
+        if(tmp[i+1] != tmp[i]) // inutile de garder les doublons
+        {
+             std::cout << "tmp["<<i-1<<"] != tmp["<<i<<"] -> gr" << std::endl;
+            monGraphe->addNoeud(new Lieu(0,tmp[i+1].get_lattitude(),tmp[i+1].get_longitude(),tmp[i+1].get_altitude(),tmp[i+1].get_nom()));
+   //  std::cout << "gr->noeuds : " << monGraphe->noeuds().size() << std::endl;
+        }
+        else {
+            std::cout << "tmp["<<i-1<<"] == tmp["<<i<<"] " << std::endl;
+        }
+    }
+//    if(tmp[nb-1] != tmp[nb]) // dernier element
+//    {
+//        monGraphe->addNoeud(new Lieu(0,tmp[nb].get_lattitude(),tmp[nb].get_longitude(),tmp[nb].get_altitude(),tmp[nb].get_nom()));
+////        monGraphe->addNoeud(new Lieu());
+
+//    }
+    std::vector<Noeud*> v =  monGraphe->noeuds();
+   // for (auto f : v)  std::cout << *f<< std::endl;
+
+//renumeroterLieux();
+}
+}
+
+
+void Manipulateur::renumeroterLieux(){
+    int n = monGraphe->noeuds().size();
+for(int i=0;i< n;i++)
+    monGraphe->getNoeud(i)->set_id(i+1);
+}
+
+
+int Manipulateur::indicePosition(const Position& pos, const std::vector<Position>& vpos)
+{
+
+
+   /*   déclaration des variables locales à la fonction */
+     bool trouve;  //vaut faux tant que la valeur "val" n'aura pas été trouvée
+     int id;  //indice de début
+     int ifin;  //indice de fin
+     int im;  //indice de "milieu"
+
+     /* initialisation de ces variables avant la boucle de recherche */
+     trouve = false;  //la valeur n'a pas encore été trouvée
+     id = 0;  //intervalle de recherche compris entre 0...
+     ifin = vpos.size();  //...et nbVal
+
+     /* boucle de recherche */
+     while(!trouve && ((ifin - id) > 1)){
+
+       im = (id + ifin)/2;  //on détermine l'indice de milieu
+
+       trouve = (vpos[im] == pos);  //on regarde si la valeur recherchée est à cet indice
+
+       if( pos < vpos[im]) ifin = im;  //si la valeur qui est à la case "im" est supérieure à la valeur recherchée, l'indice de fin "ifin" << devient >> l'indice de milieu, ainsi l'intervalle de recherche est restreint lors du prochain tour de boucle
+       else id = im;  //sinon l'indice de début << devient >> l'indice de milieu et l'intervalle est de la même façon restreint
+     }
+
+     /* test conditionnant la valeur que la fonction va renvoyer */
+     if(vpos[id] == pos) return(id);  //si on a trouvé la bonne valeur, on retourne l'indice
+     else return(-1);  //sinon on retourne -1
+
+   }
+
+
+/*
+ * Changer pour return Geojson
+ * */
 
 void Manipulateur::toGeoJSON(const Gpx& g){
 
+   // if (monGraphe != nullptr) std::cout << "coucou" <<std::endl;
 
 
     std::vector<Trk> tr;
     std::vector<TrkSeg> trs;
     std::vector<TrkPt> trp;
 
-    Position p;
+   // Position p;
     LineString l= LineString();
     MultiLineString mls = MultiLineString();
          FeatureCollection fc = FeatureCollection();
@@ -197,87 +348,127 @@ void Manipulateur::toGeoJSON(const Gpx& g){
         for (auto j: trs){
             //récupérer les points du segment
   //  std::cout << "Segment\n";
-
             trp = j.points();
 
 
 
             //récupérer un point du segment     g.getTrack(0).getSegment(0).getPoint(0)
-            for (auto k: trp){
 
-                l.addPosition(Position(k.lattitude(),k.longitude(),k.altitude()));
+            for (unsigned int k=0;k< trp.size();k++){
+                l.addPosition(Position(trp[k].lattitude(),trp[k].longitude(),trp[k].altitude()));
+                //creer un noeud et l'ajouter dans un vecteur de noeuds
+
+//                monGraphe->addNoeud(new Lieu(k+1,trp[k].lattitude(),trp[k].longitude(),trp[k].altitude(),""));
+                monGraphe->addNoeud(new Lieu(k+1,trp[k].lattitude(),trp[k].longitude(),trp[k].altitude(),""));
+
+                //creer une arete et l'ajouter dans le vecteur d'arete
+                if(k>0)
+                {
+                    monGraphe->addArete(new Arete(k+1,monGraphe->getNoeud(k-1),monGraphe->getNoeud(k)));
+                }
+
             }
             //std::cout << l;
             mls.addLineString(l);
-        }
-       // std::cout << mls;
-       /* property pr;
-        pr.d_name ="";
-        pr.d_value ="";
 
-        f.addProperty(pr);*/
+        }
+
         f.setMember(&mls);
        // std::cout << f;
       fc.addFeature(&f);
     }
 
-GeoJson gj = GeoJson(&fc);
-createFile("test_conversion.geojson",gj);
+      //GeoJson gj = GeoJson(&fc);
+     // std::cout << gj;
+    std::cout << monGraphe->noeuds().size() <<" noeuds\n";
+    std::cout << monGraphe->aretes().size() <<" aretes \n";
 
-std::vector<Position> pos = Manipulateur::positionAsc(gj);
-std::cout << pos;
-}
+    //trier les lieux par ordre croissant, supprimer les doublons et renumeroter
+    trierLieux();
 
-std::vector<Position> Manipulateur::positionAsc(const GeoJson &gj){
+    //std::cout << "Apres le tri \n";
+//    std::cout << monGraphe->noeuds().size() <<" noeuds\n";
+//    std::cout << monGraphe->aretes().size() <<" aretes \n";
+ /*
+    //initialiser la matrice adj
+    initMadj();
+    //recuperer chaque arete du graphe
+    for (auto t: monGraphe->aretes()){
 
-
-    std::vector<Position> tmp;
-    std::vector<Position> pos;
-    int nb=0;
-    pos.push_back(nb);
-
-    tmp = gj.member()->positions();
-
-    //for (auto i:gj.member()) //pour l'objet contenu dans le fichier GeoJSON
-    {
- /*       for (auto j: i->) //pour chaque segment
-        {
-//            for (auto k :j.points()) //pour chaque point
-//     {
-//                tmp.push_back(k);
-           }
-
-      }*/
+    //mettre a jour la matrice adj
+        updateMadj(t->getNoeud1()->get_id(),t->getNoeud2()->get_id());
     }
 
-//    //on trie les points ordre croissant
-//    sort(tmp.begin(),tmp.end());
 
 
-//    //on supprime les doublons
 
 
-//    for(int i=1;i<= (nb=tmp.size());i++)
-//    {
-//        if(tmp[i-1] != tmp[i]) // inutile de garder les doublons
-//        {
-//            points.push_back(tmp[i-1]);
-//        }
-//    }
-//    if(tmp[nb-1] != tmp[nb]) // dernier element
-//    {
-//        points.push_back(tmp[nb]);
-//    }
 
+    createFile("C:/Users/oliv/Documents/L3_INFO/Projet_GA/test_conversion.geojson",gj);
+    int nb = monGraphe->noeuds().size();
+    for(int i=0;i<nb;i++){
+        for(int j=0;j<nb;j++){
+            if (M_adj[i][j] == 1)
+                std::cout << "[1] ";
+            else
+                std::cout << "[0] ";
 
-    return tmp;
-
+        }
+        std::cout << std::endl;
+    }
+*/
 }
 
+
+
+/*
+ * Creer lieux et renvoit un vecteur de pointeurs
+ * */
+
+
+void Manipulateur::creerLieux(const std::vector<Position> &vp){
+
+    std::vector<Noeud*> vn;
+    for(unsigned int i=0;i<vp.size(); i++)
+    {
+        std::string name = ""; // A CHANGER
+//        Lieu l = new Lieu(i,vl[i].lattitude(),vl[i].longitude(),vl[i].elevation(),name);
+       // std::cout <<l << std::endl;
+
+        vn.push_back(new Lieu(i+1,vp[i].lattitude(),vp[i].longitude(),vp[i].elevation(),name));
+    }
+
+  monGraphe->setNoeuds(vn);
+}
+
+
+
+
+
+//id = numeros de sommets
+void Manipulateur::updateMadj(const int id1, const int id2){ M_adj[id1][id2] = 1; }
+
+void Manipulateur::initMadj(){
+//recuperer le nombre de noeuds contenus dans le graphe
+int n = monGraphe->noeuds().size();
+//allocation mémoire de la matrice adj
+*M_adj = new int[n+1] ;
+
+for( int i = 0 ; i < n+1 ; i++ )
+{
+M_adj[i] = new int[n+1];
+
+//initialisation
+for( int j = 1 ; j < n+1 ; j++ )
+{
+M_adj[i+1][j] = INT_MAX;
+}
+}
+}
 
 void Manipulateur::testGraphe()
 {
-    Lieu l1 =  Lieu(1,50.45,7.33,280.0);
+   /* Lieu l1 =  Lieu(1,50.45,7.33,280.0);
     Lieu l2 =  Lieu(2,47.48,7.33,260.0);
 
 
@@ -299,9 +490,9 @@ void Manipulateur::testGraphe()
         tab_Aretes.push_back(A2);
         tab_Aretes.push_back(A3);
 
+*/
 
-
-        Graphe G1(tab_Aretes);
+       /* Graphe G1(tab_Aretes);
         cout << "affichage du graphe :" <<  endl ;
         cout << G1  <<  endl ;
 
@@ -315,57 +506,46 @@ void Manipulateur::testGraphe()
         cout << "affichage de la portion  :" <<  endl ;
         cout << *P1 ;
 */
+    Graphe gr = Graphe();
 }
 void Manipulateur::testGPX(){
 
-Gpx g=lireGPX("C:/Users/oliv/Downloads/gpx/test.gpx");
+Gpx g=lireGPX("C:/Users/oliv/Documents/L3_INFO/Projet_GA/test.gpx");
 
 
 }
+
+// on suppose gj.member() != nullptr
+/*
+std::vector<Arete> &Manipulateur::aretes(const GJObject &gjo){
+    std::vector<Arete> tmp;
+    std::string name ;
+  //  std::cout << type;
+
+
+    //recuperer le vecteur de positions pour chaque element
+      if ( (name =  gjo.name()).find("Collection") != std::string::npos) // c'est une collection
+    {
+          for (auto t : gjo.member()-> )
+          {
+              tmp.push_back();
+          }
+
+    std::cout << std::endl <<"c'est une collection !"<<std::endl;
+    }
+    else //ce n'est pas une collection
+        std::cout<< std::endl<< "ce n'est pas une collection !"<<std::endl;
+
+}*/
+
+
+
+
 void Manipulateur::testGeoJSON(){
-    /*
-     * GeoJSON
-     * */
-    //tes//t position
-    // Position::test();
-//    std::cout << Position();
-    //test point
-     //  Point::test();
-//    std::cout << Point();
-    //test MultiPoint
-    // MultiPoint::test();
-//    std::cout << MultiPoint();
-    //test LineString
-    //  LineString::test();
-//std::cout << LineString();
-    //test MultiLineString
-    //    MultiLineString::test();
-//    std::cout << MultiLineString();
-    //Geometry
-    //       Geometry::test();
-    //std::cout << Geometry();
-    //GeometryCollection
-    // a verifier  GeometryCollection::test();
-//std::cout << GeometryCollection();
-    //Feature
-    //    Feature::test();
 
-    //FeatureCollection
-     //   FeatureCollection::test();
-    //GeoJSON
-  //   GeoJson::test();
-   //  GeoJson gs = GeoJson();
-
-
-    //   gpx_ns::createFile("C:/Users/oliv/Downloads/gpx/testEciture.gpx",g);
-//
     Gpx g = Manipulateur::lireGPX("C:/Users/oliv/Downloads/gpx/test.gpx");
-
-//std::cout << g;
-//     Manipulateur::toGeoJSON(g);
-
-    Manipulateur::toGeoJSON(g);
-
+Manipulateur m;
+  m.toGeoJSON(g);
 
 }
 

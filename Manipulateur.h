@@ -22,28 +22,60 @@ namespace manip_ns{
  class Manipulateur{
      
  public :
-	
-            Manipulateur(Graphe *g);
-            void ecrire_fichier(); //ecrire un fichier geojson
-            Graphe& creerGraphe();
-		    void graphe2fs_aps();
-		    void graphe2tableau_aretes();
-		    void afficher_fsaps();
-		    void GNO2GO();
-		    double coutChemin(vector<int> indiceAretes);
-		    double miseAJourCout(int modeCalcul); // entier contenant le mode de calcul
-		    bool contientCircuit();
-		    bool orienteON();
-            static Gpx lireGPX(const std::string& str); // lit un fichier GPX et retourne un objet gpx
-            static std::string recupererChampGPX(std::string& s,const std::string& tag);
+    /*
+     * Constructeur
+     **/
+            Manipulateur(Graphe *g=new Graphe());
+           // Manipulateur();
 
-            static std::vector<Position> positionAsc(const GeoJson& gj);
+            /* Graphe */
             static std::vector<Lieu> lieux(); //retourne la liste triée des sommets du graphe
-            static void toGeoJSON(const Gpx& g); //devrait retourner un geoJSON mais plante
+            void afficher_fsaps();
+            void GNO2GO();
+            void graphe2fs_aps();
+            void graphe2tableau_aretes();
+            Graphe& creerGraphe();
+            void creerLieux(const std::vector<Position>& vl);
+            void trierLieux(); // par ordre croissant sans doublon
+            void renumeroterLieux();
+            /* Algo */
+            double coutChemin(vector<int> indiceAretes);
+            double miseAJourCout(int modeCalcul); // entier contenant le mode de calcul
+            bool contientCircuit();
+            bool orienteON();
+            void updateMadj(const int id1, const int id2); // n = nombre de sommets du graphes
+            void initMadj();
+
+            static int indicePosition(const Position& pos, const std::vector<Position>& vpos);
+            /* Gpx */
+            static std::string recupererChampGPX(std::string& s,const std::string& tag);
+            static Gpx lireGPX(const std::string& str); // lit un fichier GPX et retourne un objet gpx
+
+            void toGeoJSON(const Gpx& g); //devrait retourner un geoJSON mais plante
+
+
+            /* Geojson */
+            void ecrire_fichier(); //ecrire un fichier geojson
+
+            static std::vector<Position> positionAsc(const GeoJson& gj); // par ordre croissant sans doublon
+
+           // static void creerArete(const GeoJson& gj); // n = nombre de sommets du graphes
+
+            // static std::vector<Arete>& aretes(const Position& p1, const Position& p2);//a faire pour mise a jour du graphe
+
+
+            /* Fichiers */
+
+            /* Affichage */
+
             static void testGraphe();
             static void testGPX();
             static void testGeoJSON();
             static void testAlgo();
+           //static std::vector<Arete *> creerArete(const std::vector<Arete>& va);
+
+
+
      private :
 	
             Graphe* monGraphe;

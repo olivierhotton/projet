@@ -15,7 +15,8 @@ using namespace std ;
 
 bool Lieu::operator==(const Lieu& l) const
     {
-      return ( d_idNoeud == l.d_idNoeud && d_lattitude == l.d_lattitude && d_longitude == l.d_longitude && d_altitude == l.d_altitude && d_nom == l.d_nom ) ;
+//      return ( d_idNoeud == l.d_idNoeud && d_lattitude == l.d_lattitude && d_longitude == l.d_longitude && d_altitude == l.d_altitude && d_nom == l.d_nom ) ;
+    return ( d_lattitude == l.d_lattitude && d_longitude == l.d_longitude && d_altitude == l.d_altitude && d_nom == l.d_nom ) ;
 
     }
 
@@ -34,19 +35,18 @@ bool Lieu::operator==(const Lieu& l) const
 
     bool Lieu::operator <(const Lieu& l) const{
 
-        if (d_lattitude < l.d_lattitude) return true;
+         if (d_longitude < l.d_longitude) return true;
         else
-            if (d_lattitude == l.d_lattitude){
-                if (d_longitude < l.d_longitude) return true;
+            if (d_longitude == l.d_longitude){
+                if (d_lattitude < l.d_lattitude) return true;
                     else
-                    if (d_longitude == l.d_longitude){
+                    if (d_lattitude == l.d_lattitude){
                         return d_altitude < l.d_altitude;
                     }
                 else return false;
 
             }
         else return false;
-
     }
 
 
@@ -66,10 +66,10 @@ bool Lieu::operator==(const Lieu& l) const
 
 void Lieu::test(){
 
-    Lieu l1 = Lieu();
+    /*Lieu l1 = Lieu();
     std::cout << " L1: "<< l1 << std::endl;
     Lieu l2 = Lieu(l1.d_idNoeud,l1.d_lattitude ,l1.d_longitude,l1.d_altitude+1);
       std::cout << " L2: " << l2 << std::endl;
       if (l1<l2) std::cout <<  "<"  <<std::endl;
-
+*/
 }

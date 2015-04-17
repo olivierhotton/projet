@@ -36,3 +36,21 @@ g.print(ost);
 return ost;
 }
 
+vector<Noeud*>& Graphe::noeuds() {
+    return d_tabNoeuds;
+}
+
+vector<Arete*>& Graphe::aretes() {
+    return d_tableauAretes;
+}
+
+void Graphe::setNoeuds(const std::vector<Noeud *> &n){ d_tabNoeuds = n;}
+Noeud *Graphe::getNoeud(int i){
+    Noeud* tmp = d_tabNoeuds[i];
+    return tmp;
+}
+void Graphe::addNoeud(Noeud* n){d_tabNoeuds.push_back(n);}
+
+void Graphe::setAretes(const std::vector<Arete*> a){ d_tableauAretes = a;}
+void Graphe::addArete(Arete* a){d_tableauAretes.push_back(a);}
+Arete* Graphe::getArete(int i){return d_tableauAretes[i];}

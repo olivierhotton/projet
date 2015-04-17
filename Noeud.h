@@ -24,14 +24,16 @@ class Noeud{
      Noeud& operator=(const Noeud& ) = default;
      bool operator!=(const Noeud& n)   const;
      bool operator==(const Noeud& n)   const;
-     void print(std::ostream& ost) const;
+
+     virtual void print(std::ostream& ost) const;
      void read(std::istream& ist);
 
      virtual double get_lattitude() const=0;
      virtual double get_longitude() const =0 ;
      virtual double get_altitude() const =0;
       int get_id() const;
-     ~Noeud() ;
+     void set_id(int i) ;
+     virtual ~Noeud() ;
 
     protected:
         int d_idNoeud;
