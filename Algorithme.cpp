@@ -1,7 +1,7 @@
 #include "Algorithme.h"
 #include <iostream>
 #include <vector>
-#define INT_MAX 2147483647
+#include <climits>
 
 using namespace std;
 using namespace algo_ns;
