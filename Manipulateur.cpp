@@ -1078,3 +1078,25 @@ void Manipulateur::choisir_structure(int i){
         }
     }
 }
+
+void Manipulateur::afficher_structure(){
+    int courant = det_structure();
+    Algorithme algo;
+    switch(courant){
+        case 1:
+            algo.affiche_fs_aps_poids(fs,aps,poids);
+            break;
+        case 2:
+            algo.affiche_matrice(M_adj);
+            break;
+        case 3:
+            algo.affiche_aretes(g,n,m);
+            break;
+        case 4:
+            algo.affiche_lists(pri);
+            break;
+        default:
+            cout<<"ERREUR!"<<endl;
+            break;
+    }
+}

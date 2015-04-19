@@ -41,6 +41,9 @@ class Algorithme {
         void all2lists(int *fs,int *aps,int *poids,principale *&pri);
         void lists2all(principale *pri,int *&fs,int *&aps,int *&poids);
         void affiche_lists(principale *pri);
+        void affiche_fs_aps_poids(int *fs,int *aps,int *poids);
+        void affiche_matrice(int **a);
+        void affiche_aretes(arete *g,n,m);
         void del_lists(principale *&pri);
         void del_fs_aps(int* fs,int* aps);
         void del_fs_aps_poids(int* fs,int* aps,int *poids);

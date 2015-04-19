@@ -1338,6 +1338,60 @@ void Algorithme::affiche_lists(principale *pri){
     }
 }
 
+void Algorithme::affiche_fs_aps_poids(int *fs,int *aps,int *poids){
+    int n = aps[0];
+    int nm = fs[0];
+    cout<<"aps : ["<<aps[0];
+    for(int i=1;i<=n;i++){
+        cout<<","<<aps[i];
+    }
+    cout<<"]"<<endl;
+    cout<<"fs : ["<<fs[0];
+    for(int i=1;i<=nm;i++){
+        cout<<","<<fs[i];
+    }
+    cout<<"]"<<endl;
+    cout<<"poids : [";
+    if(poids[0]<INT_MAX)
+        cout<<poids[0];
+    else
+        cout<<"m";
+    for(int i=1;i<=nm;i++){
+        if(poids[i]<INT_MAX)
+            cout<<","<<poids[i];
+        else
+            cout<<",m";
+    }
+    cout<<"]"<<endl;
+}
+
+void Algorithme::affiche_matrice(int **a){
+    cout<<"Matrice d'adjacent :"<<endl;
+    int n = a[0][0];
+    for(int i=1;i<=n;i++){
+        cout<<"| ";
+        for(int j=1;j<=n;j++){
+            switch(matrix[i][j]){
+                case INT_MAX:
+                    cout<<"m ";
+                    break;
+                default:
+                    cout<<matrix[i][j]<<" ";
+                    break;
+            }
+        }
+        cout<<"|"<<endl;
+    }
+}
+
+void affiche_aretes(arete *g,n,m){
+    cout<<"Sommets : "<<n<<endl;
+    cout<<"Aretes : "<<m<<endl;
+    for(int i=0;i<m;i++){
+        cout<<g[i].s<<" - "<<g[i].t<<"   cout : "<<g[i].cout<<endl;
+    }
+}
+
 void Algorithme::del_lists(principale *&pri){
     principale *pri1,*pri2;
     secondaire *sec1,*sec2;
