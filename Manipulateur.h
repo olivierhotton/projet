@@ -55,7 +55,7 @@ namespace manip_ns{
             static std::string recupererChampGPX(std::string& s,const std::string& tag);
             static Gpx lireGPX(const std::string& str); // lit un fichier GPX et retourne un objet gpx
 
-            void toGeoJSON(); //devrait retourner un geoJSON mais plante
+            void updateGeoJSON(); //devrait retourner un geoJSON mais plante
 
 
             /* Geojson */

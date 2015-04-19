@@ -204,11 +204,8 @@ int Manipulateur::indicePosition(int g, int d, Noeud *n)
 }
 
 
-/*
- * Changer pour return Geojson
- * */
 
-void Manipulateur::toGeoJSON(){
+void Manipulateur::updateGeoJSON(){
 
 
 
@@ -573,7 +570,7 @@ void Manipulateur::testGeoJSON(){
     Gpx g = Manipulateur::lireGPX("C:/Users/oliv/Documents/L3_INFO/Projet_GA/test.gpx");
     Manipulateur m;
     m.creerGraphe(g);
-    m.toGeoJSON();
+    m.updateGeoJSON();
 }
 
 
