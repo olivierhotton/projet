@@ -23,7 +23,7 @@ typedef struct soma {
 
 class Algorithme {
     public:
-        void dijkstra(int* fs, int* aps,int **cout,int s,int* &pred,int* &d);
+        void dijkstra(int* fs, int* aps,int *poids,int s,int* &pred,int* &d);
         void det_fpapp(int* fs, int* aps,int *&fp,int *&app);
         void bellman(int* fs, int* aps,int* poids,int s,int* &pred,int* &d); //sans circuit
         bool dantzig(int **a,int **&m);
