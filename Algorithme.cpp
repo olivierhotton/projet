@@ -833,7 +833,9 @@ void Algorithme::test(){
 
 }
 
-void Algorithme::dijkstra(int* fs, int* aps,int **cout,int s,int* &pred,int* &d){
+void Algorithme::dijkstra(int* fs, int* aps,int *poids,int s,int* &pred,int* &d){
+    int **cout;
+    all2matrix(fs,aps,poids,cout);
     int n = aps[0];int x,j,m,k;
     m = n-1;
     d = new int[n+1]; d[0] = n;
@@ -877,6 +879,7 @@ void Algorithme::dijkstra(int* fs, int* aps,int **cout,int s,int* &pred,int* &d)
             k++;
         }
     }
+    del_matrice(cout);
     delete [] b;
 }
 
