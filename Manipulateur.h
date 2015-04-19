@@ -16,6 +16,7 @@
 
 using namespace gpx_ns;
 using namespace geojson_ns;
+using namespace algo_ns;
 
 namespace manip_ns{
 
@@ -87,17 +88,15 @@ namespace manip_ns{
             Graphe* monGraphe;
             GeoJson* monGeoJson;
 		    vector<Arete> tabAretes; 
-<<<<<<< HEAD
+
             int* fs;
             int* aps;
-=======
+
             arete* g;
             int n; // nombre de sommets
             int m; // nombre d'aretes
-            int* fs;
-            int* aps;
             int* poids;
->>>>>>> origin/master
+
             int** M_adj;
             principale* pri;
 		    vector<double> tabCouts; // couts des aretes

@@ -43,7 +43,7 @@ class Algorithme {
         void affiche_lists(principale *pri);
         void affiche_fs_aps_poids(int *fs,int *aps,int *poids);
         void affiche_matrice(int **a);
-        void affiche_aretes(arete *g,n,m);
+        void affiche_aretes(arete *g,int n,int m);
         void del_lists(principale *&pri);
         void del_fs_aps(int* fs,int* aps);
         void del_fs_aps_poids(int* fs,int* aps,int *poids);

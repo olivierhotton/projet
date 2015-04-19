@@ -1079,7 +1079,6 @@ void Algorithme::prim(arete *g,int n,int m,int s,arete *&t){
     X[s] = true;
     int k,min_k,l=0;
     long min;
-    arete a;
     while(l<(n-1)){
         min = INT_MAX;
         k=0;
@@ -1371,12 +1370,12 @@ void Algorithme::affiche_matrice(int **a){
     for(int i=1;i<=n;i++){
         cout<<"| ";
         for(int j=1;j<=n;j++){
-            switch(matrix[i][j]){
+            switch(a[i][j]){
                 case INT_MAX:
                     cout<<"m ";
                     break;
                 default:
-                    cout<<matrix[i][j]<<" ";
+                    cout<<a[i][j]<<" ";
                     break;
             }
         }
@@ -1384,7 +1383,7 @@ void Algorithme::affiche_matrice(int **a){
     }
 }
 
-void affiche_aretes(arete *g,n,m){
+void Algorithme::affiche_aretes(arete *g,int n,int m){
     cout<<"Sommets : "<<n<<endl;
     cout<<"Aretes : "<<m<<endl;
     for(int i=0;i<m;i++){
