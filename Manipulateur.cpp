@@ -217,63 +217,63 @@ void Manipulateur::toGeoJSON(){
     Feature f = Feature();
     Position p;
 
-int i,j;
+    int i,j;
     //debut recuperer les aretes
 
 
-/* ajouter chaque arete */
-        for(auto u : monGraphe->aretes()) //pour chaque arete
+    /* ajouter chaque arete */
+    for(auto u : monGraphe->aretes()) //pour chaque arete
+    {
+
+        LineString l= LineString();
+
+        //ne pas tracer les doubles orientations i->j et j->i
+        if((i=u->getNoeud1()->get_id()) < (j=u->getNoeud2()->get_id()))
+
+            //     i=u->getNoeud1()->get_id();
+            //      j=u->getNoeud2()->get_id();
+
         {
 
-     LineString l= LineString();
+            p=Position(u->getNoeud1()->get_lattitude(),u->getNoeud1()->get_longitude(),u->getNoeud1()->get_altitude());
+            l.addPosition(p);
+            std::cout <<i<< " vers ";
+            p=Position(u->getNoeud2()->get_lattitude(),u->getNoeud2()->get_longitude(),u->getNoeud2()->get_altitude());
+            l.addPosition(p);
+            std::cout << j << std::endl;
 
-     //ne pas tracer les doubles orientations i->j et j->i
-     if((i=u->getNoeud1()->get_id()) < (j=u->getNoeud2()->get_id()))
-
-//     i=u->getNoeud1()->get_id();
-//      j=u->getNoeud2()->get_id();
-
-     {
-
-         p=Position(u->getNoeud1()->get_lattitude(),u->getNoeud1()->get_longitude(),u->getNoeud1()->get_altitude());
-   l.addPosition(p);
-   std::cout <<i<< " vers ";
-         p=Position(u->getNoeud2()->get_lattitude(),u->getNoeud2()->get_longitude(),u->getNoeud2()->get_altitude());
-  l.addPosition(p);
-  std::cout << j << std::endl;
-
-         mls.addLineString(l);
-     }
-
-
+            mls.addLineString(l);
         }
-                std::cout << std::endl;
-afficheAdj();
-/* ajouter tous les points sur un meme segment */
-//for(auto u : monGraphe->noeuds()) //pour chaque arete
-//{
 
-//LineString l= LineString();
 
-////ne pas tracer les doubles orientations i->j et j->i
-////if((i=u->get_id()) < (j=u->get_id()))
-//{
+    }
+    std::cout << std::endl;
+//    afficheAdj();
+    /* ajouter tous les points sur un meme segment */
+    //for(auto u : monGraphe->noeuds()) //pour chaque arete
+    //{
 
-// p=Position(u->get_lattitude(),u->get_longitude(),u->get_altitude());
-//l.addPosition(p);/*
-//std::cout <<i<< " vers ";
-// p=Position(u->get_lattitude(),u->get_longitude(),u->get_altitude());
-//l.addPosition(p);
-//std::cout << j << std::endl;*/
+    //LineString l= LineString();
 
-// mls.addLineString(l);
-//}
-//}
+    ////ne pas tracer les doubles orientations i->j et j->i
+    ////if((i=u->get_id()) < (j=u->get_id()))
+    //{
 
-f.setMember(&mls);
-           fc.addFeature(&f);
+    // p=Position(u->get_lattitude(),u->get_longitude(),u->get_altitude());
+    //l.addPosition(p);/*
+    //std::cout <<i<< " vers ";
+    // p=Position(u->get_lattitude(),u->get_longitude(),u->get_altitude());
+    //l.addPosition(p);
+    //std::cout << j << std::endl;*/
 
-std::cout <<  monGraphe->aretes().size()<< std::endl;
+    // mls.addLineString(l);
+    //}
+    //}
+
+    f.setMember(&mls);
+    fc.addFeature(&f);
+
+    std::cout <<  monGraphe->aretes().size()<< std::endl;
 
     if (monGeoJson != nullptr) delete monGeoJson;
     monGeoJson = new GeoJson(&fc);
@@ -287,28 +287,28 @@ std::cout <<  monGraphe->aretes().size()<< std::endl;
 
 void Manipulateur::afficheAdj()const{
     int nb = M_adj[0][0];
-   // std::cout << M_adj[0][0] <<"\n";
+    // std::cout << M_adj[0][0] <<"\n";
 
     for(int i=0;i<=nb;i++){
-         if (i<2)
-                std::cout << "[" << M_adj[0][i]<<"] ";
-            else
-              {
-                 std::cout << "[0] ";
-            }
-
-
+        if (i<2)
+            std::cout << "[" << M_adj[0][i]<<"] ";
+        else
+        {
+            std::cout << "[0] ";
         }
 
-        std::cout << std::endl;
+
+    }
+
+    std::cout << std::endl;
 
     for(int i=0;i<=nb;i++){
         for(int j=0;j<=nb;j++){
             if (M_adj[i][j] == 1)
                 std::cout << "[1] ";
             else
-              {
-                 std::cout << "[0] ";
+            {
+                std::cout << "[0] ";
             }
         }
 
@@ -350,9 +350,9 @@ void Manipulateur::trier(std::vector<Noeud *> &tmp){
 
 void Manipulateur::creerGraphe(const Gpx& g){
 
-//    std::cout << "-------------------------------------  : "<<endl;
-//    std::cout << "taille de graphe->noeuds : "<<monGraphe->noeuds().size()<<std::endl;
-//    std::cout << "taille de aretes  : "<< monGraphe->aretes().size()<< std::endl;
+    //    std::cout << "-------------------------------------  : "<<endl;
+    //    std::cout << "taille de graphe->noeuds : "<<monGraphe->noeuds().size()<<std::endl;
+    //    std::cout << "taille de aretes  : "<< monGraphe->aretes().size()<< std::endl;
 
     std::vector<Noeud*> lieux, tmp,tmp2;
     //ok fait lors de la lecture du gpx
@@ -369,14 +369,14 @@ void Manipulateur::creerGraphe(const Gpx& g){
     }
 
 
-//    for(unsigned int i=0;i<tmp.size();i++){
-//        cout<<"["<<tmp[i]->get_lattitude()<<","<<tmp[i]->get_longitude()<<","<<tmp[i]->get_altitude()<<"]"<<endl;
-//    }
+    //    for(unsigned int i=0;i<tmp.size();i++){
+    //        cout<<"["<<tmp[i]->get_lattitude()<<","<<tmp[i]->get_longitude()<<","<<tmp[i]->get_altitude()<<"]"<<endl;
+    //    }
 
     //trier les noeuds par ordre croissant
 
     trier(tmp);
-//    cout<<"Apres avoir trie"<<endl;
+    //    cout<<"Apres avoir trie"<<endl;
 
     //suppression des doublons
     lieux.push_back(tmp[0]);
@@ -390,10 +390,10 @@ void Manipulateur::creerGraphe(const Gpx& g){
         }
 
     }
-//    cout<<"Apres avoir enleve doublons"<<endl;
-//    for(unsigned int i=0;i<lieux.size();i++){
-//        cout<<"["<<lieux[i]->get_lattitude()<<","<<lieux[i]->get_longitude()<<","<<lieux[i]->get_altitude()<<"]"<<endl;
-//    }
+    //    cout<<"Apres avoir enleve doublons"<<endl;
+    //    for(unsigned int i=0;i<lieux.size();i++){
+    //        cout<<"["<<lieux[i]->get_lattitude()<<","<<lieux[i]->get_longitude()<<","<<lieux[i]->get_altitude()<<"]"<<endl;
+    //    }
 
     //copier le vecteur lieux dans le vecteur de noeuds du graphe
     monGraphe->setNoeuds(lieux);
@@ -453,47 +453,47 @@ void Manipulateur::creerGraphe(const Gpx& g){
         }
     }
     //libérer la mémoire => vider les vecteurs tmp et lieux sans supprimer les objets pointés
-        while(!tmp.empty()){
-            tmp.pop_back();
+    while(!tmp.empty()){
+        tmp.pop_back();
+    }
+    tmp.clear();
+    while(!lieux.empty()){
+        lieux.pop_back();
+    }
+    lieux.clear();
+
+
+    //creer aretes
+    int nb = monGraphe->noeuds().size();
+    for(int i=1;i<=nb;i++){
+        for(int j=1;j<=nb;j++){
+            if (M_adj[i][j] == 1 && i!=j)
+
+                monGraphe->addArete(new Arete(monGraphe->aretes().size()+1,monGraphe->getNoeud(i-1),monGraphe->getNoeud(j-1)));
+
         }
-        tmp.clear();
-        while(!lieux.empty()){
-            lieux.pop_back();
-        }
-        lieux.clear();
-
-
-        //creer aretes
-        int nb = monGraphe->noeuds().size();
-        for(int i=1;i<=nb;i++){
-            for(int j=1;j<=nb;j++){
-                if (M_adj[i][j] == 1 && i!=j)
-
-                    monGraphe->addArete(new Arete(monGraphe->aretes().size()+1,monGraphe->getNoeud(i-1),monGraphe->getNoeud(j-1)));
-
-            }
-        }
+    }
 
 
 
 
-//    std::cout << "-------------------------------------  : "<<endl;
-//    std::cout << "taille de graphe->noeuds : "<<monGraphe->noeuds().size()<<std::endl;
-//    std::cout << "taille de aretes  : "<< monGraphe->aretes().size()<< std::endl;
-//    std::cout << "taille de lieux   : "<< lieux.size()<< std::endl;
-//    std::cout << "taille de tmp   : "<< tmp.size()<< std::endl;
-//    std::cout << "taille de tmp2   : "<< tmp2.size()<< std::endl;
-//    std::cout << "-------------------------------------  : "<<endl;
+    //    std::cout << "-------------------------------------  : "<<endl;
+    //    std::cout << "taille de graphe->noeuds : "<<monGraphe->noeuds().size()<<std::endl;
+    //    std::cout << "taille de aretes  : "<< monGraphe->aretes().size()<< std::endl;
+    //    std::cout << "taille de lieux   : "<< lieux.size()<< std::endl;
+    //    std::cout << "taille de tmp   : "<< tmp.size()<< std::endl;
+    //    std::cout << "taille de tmp2   : "<< tmp2.size()<< std::endl;
+    //    std::cout << "-------------------------------------  : "<<endl;
 
-//    k=0;
-//    for (auto t : monGraphe->noeuds())
-//    std::cout << k++ <<*t<<std::endl;
+    //    k=0;
+    //    for (auto t : monGraphe->noeuds())
+    //    std::cout << k++ <<*t<<std::endl;
 
-//    for (auto t : monGraphe->aretes())
-//    std::cout <<*t<<std::endl;
+    //    for (auto t : monGraphe->aretes())
+    //    std::cout <<*t<<std::endl;
     //        std::cout << t->getNoeud1()->get_id() << " : " << t->getNoeud2()->get_id() <<std::endl;
-     //   std::cout << t->getNoeud1() << " : " << t->getNoeud2()<<std::endl;
-//afficheAdj();
+    //   std::cout << t->getNoeud1() << " : " << t->getNoeud2()<<std::endl;
+    //afficheAdj();
 
 }
 
@@ -517,7 +517,7 @@ void Manipulateur::updateMadj(const int i, const int j){ M_adj[i][j] = 1; M_adj[
 void Manipulateur::initMadj(){
     //recuperer le nombre de noeuds contenus dans le graphe
     int n = monGraphe->noeuds().size();
-     //allocation mÃ©moire de la matrice adj
+    //allocation mÃ©moire de la matrice adj
     M_adj = new int*[n+1] ;
 
     for( int i = 0 ; i < n+1 ; i++ )
@@ -559,7 +559,7 @@ void Manipulateur::updateArete(){
 
 void Manipulateur::testGraphe()
 {
-//    Graphe gr = Graphe();
+    //    Graphe gr = Graphe();
 }
 void Manipulateur::testGPX(){	
 
@@ -578,7 +578,7 @@ void Manipulateur::testGeoJSON(){
 
 
 void Manipulateur::testAlgo(){
-/*
+    /*
     int *fs,*aps,**cout1,s,*pred,*d;
     int n = 7;
     int m = 12;
@@ -638,17 +638,17 @@ void Manipulateur::testAlgo(){
     s = 1;
 
     Algorithme algo;
-	
-	
-	vector<arete> va;
-	int index = 5;
-	algo.supprime_sommet(fs,aps,index,va);
-	cout<<"****Test suppression d'un sommet****"<<endl;
-	for(int i=0;i<va.size();i++){
-		cout<<va[i].s<<" -> "<<va[i].t<<endl;
-	}
-	cout<<endl;
-	
+
+
+    vector<arete> va;
+    int index = 5;
+    algo.supprime_sommet(fs,aps,index,va);
+    cout<<"****Test suppression d'un sommet****"<<endl;
+    for(int i=0;i<va.size();i++){
+        cout<<va[i].s<<" -> "<<va[i].t<<endl;
+    }
+    cout<<endl;
+
     algo.dijkstra(fs,aps,cout1,s,pred,d);
     cout<<"****Test Djikstra****"<<endl;
     cout<<"pred : ["<<pred[1];
@@ -906,32 +906,32 @@ void Manipulateur::testAlgo(){
 }
 
 void Manipulateur::supprime_sommet(int *fs,int *aps,int index,vector<algo_ns::arete> &g){
-	int n = aps[0];
-	int l,t;
-	arete elem;
-	for(int i=1;i<index;i++){
-		l = aps[i];
-		while((t=fs[l])!=0){
-			if(t!=index){
-				elem.s = i;
-				elem.t = t;
-				g.push_back(elem);
-			}
-			l++;
-		}
-	}
-	for(int i=index+1;i<=n;i++){
-		l = aps[i];
-		while((t=fs[l])!=0){
-			if(t!=index){
-				elem.s = i;
-				elem.t = t;
-				g.push_back(elem);
-			}
-			l++;
-		}
-	}
-	
+    int n = aps[0];
+    int l,t;
+    arete elem;
+    for(int i=1;i<index;i++){
+        l = aps[i];
+        while((t=fs[l])!=0){
+            if(t!=index){
+                elem.s = i;
+                elem.t = t;
+                g.push_back(elem);
+            }
+            l++;
+        }
+    }
+    for(int i=index+1;i<=n;i++){
+        l = aps[i];
+        while((t=fs[l])!=0){
+            if(t!=index){
+                elem.s = i;
+                elem.t = t;
+                g.push_back(elem);
+            }
+            l++;
+        }
+    }
+
 }
 
 /*
@@ -958,25 +958,25 @@ void Manipulateur::choisir_structure(int i){
         int **a,*fs_tmp,*aps_tmp,*poids_tmp;
         algo.aretes2matrix(g,a,n,m);
         switch(i){
-            case 1:
-                algo.matrix2all(a,fs,aps,poids);
-                algo.del_matrice(a);
-                delete [] g;
-                break;
-            case 2:
-                M_adj = a;
-                delete [] g;
-                break;
-            case 4:
-                algo.matrix2all(a,fs_tmp,aps_tmp,poids_tmp);
-                algo.del_matrice(a);
-                algo.all2lists(fs_tmp,aps_tmp,poids_tmp,pri);
-                algo.del_fs_aps_poids(fs_tmp,aps_tmp,poids_tmp);
-                delete [] g;
-                break;
-            default:
-                cout<<"ERREUR : Structure indéterminée"<<endl;
-                break;
+        case 1:
+            algo.matrix2all(a,fs,aps,poids);
+            algo.del_matrice(a);
+            delete [] g;
+            break;
+        case 2:
+            M_adj = a;
+            delete [] g;
+            break;
+        case 4:
+            algo.matrix2all(a,fs_tmp,aps_tmp,poids_tmp);
+            algo.del_matrice(a);
+            algo.all2lists(fs_tmp,aps_tmp,poids_tmp,pri);
+            algo.del_fs_aps_poids(fs_tmp,aps_tmp,poids_tmp);
+            delete [] g;
+            break;
+        default:
+            cout<<"ERREUR : Structure indéterminée"<<endl;
+            break;
         }
     }
     else{
@@ -989,23 +989,23 @@ void Manipulateur::choisir_structure(int i){
                 int **a;
                 algo.all2matrix(fs,aps,poids,a);
                 switch(i){
-                    case 2:
-                        M_adj = a;
+                case 2:
+                    M_adj = a;
+                    algo.del_fs_aps_poids(fs,aps,poids);
+                    break;
+                case 3:
+                    if(algo.estSymetrique(a)){
+                        algo.matrix2aretes(a,g,n,m);
                         algo.del_fs_aps_poids(fs,aps,poids);
-                        break;
-                    case 3:
-                        if(algo.estSymetrique(a)){
-                            algo.matrix2aretes(a,g,n,m);
-                            algo.del_fs_aps_poids(fs,aps,poids);
-                        }
-                        else{
-                            cout<<"ERREUR : Impossible de passer de la structure du graphe orienté vers celle du non orienté"<<endl;
-                        }
-                        algo.del_matrice(a);
-                        break;
-                    default:
-                        cout<<"ERREUR : Structure indéterminée"<<endl;
-                        break;
+                    }
+                    else{
+                        cout<<"ERREUR : Impossible de passer de la structure du graphe orienté vers celle du non orienté"<<endl;
+                    }
+                    algo.del_matrice(a);
+                    break;
+                default:
+                    cout<<"ERREUR : Structure indéterminée"<<endl;
+                    break;
                 }
             }
         }
@@ -1020,21 +1020,21 @@ void Manipulateur::choisir_structure(int i){
                 }
                 else{
                     switch(i){
-                        case 1:
-                            algo.matrix2all(M_adj,fs,aps,poids);
+                    case 1:
+                        algo.matrix2all(M_adj,fs,aps,poids);
+                        algo.del_matrice(M_adj);
+                        break;
+                    case 3:
+                        if(algo.estSymetrique(M_adj)){
+                            algo.matrix2aretes(M_adj,g,n,m);
                             algo.del_matrice(M_adj);
-                            break;
-                        case 3:
-                            if(algo.estSymetrique(M_adj)){
-                                algo.matrix2aretes(M_adj,g,n,m);
-                                algo.del_matrice(M_adj);
-                            }
-                            else{
-                                cout<<"ERREUR : Impossible de passer de la structure du graphe orienté vers celle du non orienté"<<endl;
-                            }
-                            break;
-                        default:
-                            cout<<"ERREUR : Structure indéterminée"<<endl;
+                        }
+                        else{
+                            cout<<"ERREUR : Impossible de passer de la structure du graphe orienté vers celle du non orienté"<<endl;
+                        }
+                        break;
+                    default:
+                        cout<<"ERREUR : Structure indéterminée"<<endl;
                     }
                 }
             }
@@ -1043,31 +1043,31 @@ void Manipulateur::choisir_structure(int i){
                     int **a,*fs_tmp,*aps_tmp;
                     algo.lists2all(pri,fs_tmp,aps_tmp,poids);
                     switch(i){
-                        case 1:
-                            fs = fs_tmp;
-                            aps = aps_tmp;
+                    case 1:
+                        fs = fs_tmp;
+                        aps = aps_tmp;
+                        algo.del_lists(pri);
+                        break;
+                    case 2:
+                        algo.all2matrix(fs_tmp,aps_tmp,poids,M_adj);
+                        algo.del_fs_aps_poids(fs_tmp,aps_tmp,poids);
+                        algo.del_lists(pri);
+                        break;
+                    case 3:
+                        algo.all2matrix(fs_tmp,aps_tmp,poids,a);
+                        algo.del_fs_aps_poids(fs_tmp,aps_tmp,poids);
+                        if(algo.estSymetrique(a)){
+                            algo.matrix2aretes(a,g,n,m);
                             algo.del_lists(pri);
-                            break;
-                        case 2:
-                            algo.all2matrix(fs_tmp,aps_tmp,poids,M_adj);
-                            algo.del_fs_aps_poids(fs_tmp,aps_tmp,poids);
-                            algo.del_lists(pri);
-                            break;
-                        case 3:
-                            algo.all2matrix(fs_tmp,aps_tmp,poids,a);
-                            algo.del_fs_aps_poids(fs_tmp,aps_tmp,poids);
-                            if(algo.estSymetrique(a)){
-                                algo.matrix2aretes(a,g,n,m);
-                                algo.del_lists(pri);
-                            }
-                            else{
-                                cout<<"ERREUR : Impossible de passer de la structure du graphe orienté vers celle du non orienté"<<endl;
-                            }
-                            algo.del_matrice(a);
-                            break;
-                        default:
-                            cout<<"ERREUR : Structure indéterminée"<<endl;
-                            break;
+                        }
+                        else{
+                            cout<<"ERREUR : Impossible de passer de la structure du graphe orienté vers celle du non orienté"<<endl;
+                        }
+                        algo.del_matrice(a);
+                        break;
+                    default:
+                        cout<<"ERREUR : Structure indéterminée"<<endl;
+                        break;
                     }
                 }
                 else{
@@ -1082,20 +1082,20 @@ void Manipulateur::afficher_structure(){
     int courant = det_structure();
     Algorithme algo;
     switch(courant){
-        case 1:
-            algo.affiche_fs_aps_poids(fs,aps,poids);
-            break;
-        case 2:
-            algo.affiche_matrice(M_adj);
-            break;
-        case 3:
-            algo.affiche_aretes(g,n,m);
-            break;
-        case 4:
-            algo.affiche_lists(pri);
-            break;
-        default:
-            cout<<"ERREUR!"<<endl;
-            break;
+    case 1:
+        algo.affiche_fs_aps_poids(fs,aps,poids);
+        break;
+    case 2:
+        algo.affiche_matrice(M_adj);
+        break;
+    case 3:
+        algo.affiche_aretes(g,n,m);
+        break;
+    case 4:
+        algo.affiche_lists(pri);
+        break;
+    default:
+        cout<<"ERREUR!"<<endl;
+        break;
     }
 }

@@ -92,13 +92,14 @@ namespace manip_ns{
             int* fs;
             int* aps;
 
+
             arete* g;
             int n; // nombre de sommets
             int m; // nombre d'aretes
             int* poids;
 
             int** M_adj;
-            principale* pri;
+            algo_ns::principale* pri;
 		    vector<double> tabCouts; // couts des aretes
 
 

@@ -254,7 +254,7 @@ void Algorithme::test(){
     g[12] = a;
 
     algo.trierAretes(g,m);
-    algo.kruskal(g,n,m,t);
+    algo.kruskal(g,n,t);
     cout<<"****Test Kruskal****"<<endl;
     for(int i=0;i<(n-1);i++){
         cout<<"["<<t[i].s<<","<<t[i].t<<","<<t[i].cout<<"]"<<endl;
@@ -951,7 +951,7 @@ void Algorithme::bellman(int* fs, int* aps,int* poids,int s,int* &pred,int* &d){
                 d[X[k]] = min;
                 pred[X[k]] = min_t;
                 S[X[k]] = true;
-                for(int j=k;j<(X.size()-1);j++){
+                for(unsigned int j=k;j<(X.size()-1);j++){
                     X[j] = X[j+1];
                 }
                 X.pop_back();
@@ -1040,7 +1040,7 @@ void Algorithme::trierAretes(arete *&g,int m){
     }
 }
 
-void Algorithme::kruskal(arete *g,int n,int m,arete *&t){
+void Algorithme::kruskal(arete *g,int n,arete *&t){
     t = new arete[n];
     int *pilch = new int[n+1];
     int *prem = new int[n+1];
@@ -1077,11 +1077,14 @@ void Algorithme::prim(arete *g,int n,int m,int s,arete *&t){
     aretes.push_back(-1);
     for(int i=0;i<=n;i++) X[i] = false;
     X[s] = true;
-    int k,min_k,l=0;
+    int min_k,l=0;
     long min;
+
+    //arete a;
+
     while(l<(n-1)){
         min = INT_MAX;
-        k=0;
+        unsigned int k=0;
         while(k<aretes.size()-1){
             if((!X[g[aretes[k]].s]&&X[g[aretes[k]].t])||(X[g[aretes[k]].s]&&!X[g[aretes[k]].t])){
                 if(g[aretes[k]].cout<min){
@@ -1098,7 +1101,7 @@ void Algorithme::prim(arete *g,int n,int m,int s,arete *&t){
         else{
             X[g[aretes[min_k]].s] = true;
         }
-        for(int i=min_k;i<(aretes.size()-1);i++){
+        for(unsigned int i=min_k;i<(aretes.size()-1);i++){
             aretes[i] = aretes[i+1];
         }
         aretes.pop_back();

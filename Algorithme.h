@@ -28,7 +28,7 @@ class Algorithme {
         void bellman(int* fs, int* aps,int* poids,int s,int* &pred,int* &d); //sans circuit
         bool dantzig(int **a,int **&m);
         bool estSymetrique(int **a);
-        void kruskal(arete *g,int n,int m,arete *&t);
+        void kruskal(arete *g, int n, arete *&t);
         void prim(arete *g,int n,int m,int s,arete *&t);
         void trierAretes(arete *&g,int m);
         void prufer(arete *g,int n,int *&t);
