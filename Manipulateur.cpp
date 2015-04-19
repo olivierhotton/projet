@@ -19,9 +19,6 @@ std::string Manipulateur::recupererChampGPX(std::string& ligne,const std::string
     if( (pos = ligne.find(tag )) != std::string::npos ){
         champ = tag;
 
-        //cas d'une balise trk
-
-        //cas d'une balise quelconque
         //nettoyage de la balise pour rÃ©cupÃ©rer le champ
         if( (pos = champ.find("<")) != std::string::npos ){
             champ.replace (pos,pos + 1 ,"");
@@ -141,14 +138,12 @@ Gpx Manipulateur::lireGPX(const std::string& str){
             //fin trkpt
             if ( ligne.find("</trkpt>") != std::string::npos)
             {
-                //                std::cout << "creer et ajouter le point dans le trkseg "  << std::endl;
                 seg.ajouterPoint(p);
 
             }
             //fin trkseg
             if ( ligne.find("</trkseg>") != std::string::npos)
             {
-                //seg.afficher(std::cout);
                 track.ajouterSegment(seg);
 
             }
@@ -196,10 +191,18 @@ int Manipulateur::indicePosition(int g, int d, Noeud *n)
     else
     {
         int m = (g+d)/2;
-        if( n->get_lattitude() <= monGraphe->getNoeud(m)->get_lattitude() )
+        if (n->get_lattitude() < monGraphe->getNoeud(m)->get_lattitude())
+
             return indicePosition(g,m,n);
         else
-            return indicePosition(m+1,d,n);
+            if(n->get_lattitude() == monGraphe->getNoeud(m)->get_lattitude())
+            {  if(n->get_longitude() < monGraphe->getNoeud(m)->get_longitude())
+                    return indicePosition(g,m,n);
+                else
+                    return indicePosition(m+1,d,n);
+            }
+            else
+                return indicePosition(m+1,d,n);
     }
 }
 
@@ -207,6 +210,9 @@ int Manipulateur::indicePosition(int g, int d, Noeud *n)
 
 void Manipulateur::updateGeoJSON(){
 
+        std::cout << "-------------------------------------  : "<<endl;
+        std::cout << "taille de graphe->noeuds : "<<monGraphe->noeuds().size()<<std::endl;
+        std::cout << "taille de aretes  : "<< monGraphe->aretes().size()<< std::endl;
 
 
     MultiLineString mls = MultiLineString();
@@ -224,20 +230,19 @@ void Manipulateur::updateGeoJSON(){
 
         LineString l= LineString();
 
+        i=u->getNoeud1()->get_id();
+         j=u->getNoeud2()->get_id();
+
         //ne pas tracer les doubles orientations i->j et j->i
-        if((i=u->getNoeud1()->get_id()) < (j=u->getNoeud2()->get_id()))
-
-            //     i=u->getNoeud1()->get_id();
-            //      j=u->getNoeud2()->get_id();
-
+        if(i <= j)
         {
 
             p=Position(u->getNoeud1()->get_lattitude(),u->getNoeud1()->get_longitude(),u->getNoeud1()->get_altitude());
             l.addPosition(p);
-            std::cout <<i<< " vers ";
+            //std::cout <<i<< " vers ";
             p=Position(u->getNoeud2()->get_lattitude(),u->getNoeud2()->get_longitude(),u->getNoeud2()->get_altitude());
             l.addPosition(p);
-            std::cout << j << std::endl;
+           // std::cout << j << std::endl;
 
             mls.addLineString(l);
         }
@@ -276,7 +281,7 @@ void Manipulateur::updateGeoJSON(){
     monGeoJson = new GeoJson(&fc);
     // std::cout << *monGeoJson ;
 
-    createFile("C:/Users/oliv/Documents/L3_INFO/Projet_GA/test_conversion.geojson",*monGeoJson);
+    createFile("C:/gpx/test_conversion.geojson",*monGeoJson);
 
 
 }
@@ -431,7 +436,10 @@ void Manipulateur::creerGraphe(const Gpx& g){
                     n2=tmp2[k];
 
                     int i=indicePosition(0,monGraphe->noeuds().size()-1,n1);
+
                     int j=indicePosition(0,monGraphe->noeuds().size()-1,n2);
+
+                    if(i==j)cout <<"i==j" <<i << ","<<j<<std::endl;
 
                     //Avec 2 indices : A[i][j] = 1;
                     updateMadj(i+1,j+1); //decalage
@@ -567,7 +575,7 @@ void Manipulateur::testGPX(){
 
 void Manipulateur::testGeoJSON(){
 
-    Gpx g = Manipulateur::lireGPX("C:/Users/oliv/Documents/L3_INFO/Projet_GA/test.gpx");
+    Gpx g = Manipulateur::lireGPX("c:/gpx/test.gpx");
     Manipulateur m;
     m.creerGraphe(g);
     m.updateGeoJSON();
