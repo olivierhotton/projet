@@ -467,9 +467,15 @@ void Manipulateur::creerGraphe(const Gpx& g){
             if (M_adj[i][j] == 1 && i!=j)
 
                 monGraphe->addArete(new Arete(monGraphe->aretes().size()+1,monGraphe->getNoeud(i-1),monGraphe->getNoeud(j-1)));
+            else
+                M_adj[i][j] = INT_MAX;
 
         }
     }
+
+   Algorithme algo;
+   algo.matrix2all(M_adj,fs,aps,poids);
+   algo.del_matrice(M_adj);
 
 
 
@@ -491,6 +497,7 @@ void Manipulateur::creerGraphe(const Gpx& g){
     //        std::cout << t->getNoeud1()->get_id() << " : " << t->getNoeud2()->get_id() <<std::endl;
     //   std::cout << t->getNoeud1() << " : " << t->getNoeud2()<<std::endl;
    // afficheAdj();
+   afficher_structure();
 
 }
 
