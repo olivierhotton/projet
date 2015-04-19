@@ -318,18 +318,18 @@ void Manipulateur::toGeoJSON(const Gpx& g){
 
 
 void Manipulateur::afficheAdj()const{
-        int nb = monGraphe->noeuds().size();
-        std::cout << M_adj[0][0] <<"\n";
-        for(int i=0;i<=nb;i++){
-            for(int j=0;j<=nb;j++){
-                if (M_adj[i][j] == 1)
-                    std::cout << "[1] ";
-                else
-                    std::cout << "[0] ";
+    int nb = monGraphe->noeuds().size();
+    std::cout << M_adj[0][0] <<"\n";
+    for(int i=0;i<=nb;i++){
+        for(int j=0;j<=nb;j++){
+            if (M_adj[i][j] == 1)
+                std::cout << "[1] ";
+            else
+                std::cout << "[0] ";
 
-            }
-            std::cout << std::endl;
         }
+        std::cout << std::endl;
+    }
 }
 
 /*
@@ -392,13 +392,14 @@ void Manipulateur::creerGraphe(const Gpx& g){
         }
 
     }
-     cout<<"Apres avoir enleve doublons"<<endl;
-     for(unsigned int i=0;i<lieux.size();i++){
+    cout<<"Apres avoir enleve doublons"<<endl;
+    for(unsigned int i=0;i<lieux.size();i++){
         cout<<"["<<lieux[i]->get_lattitude()<<","<<lieux[i]->get_longitude()<<","<<lieux[i]->get_altitude()<<"]"<<endl;
     }
 
     //copier le vecteur lieux dans le vecteur de noeuds du graphe
     monGraphe->setNoeuds(lieux);
+
 
     //on renumerote les lieux du vecteur lieux
 
@@ -422,33 +423,25 @@ void Manipulateur::creerGraphe(const Gpx& g){
             //le vecteur tmp2 correspond a un segment
             for(auto x : u.points())
                 tmp2.push_back(new Lieu(0,x.lattitude(),x.longitude(),x.altitude()));
-           // cout << Lieu(0,x.lattitude(),x.longitude(),x.altitude()) <<"\n";
+            // cout << Lieu(0,x.lattitude(),x.longitude(),x.altitude()) <<"\n";
             //parcourir tmp2
             //recherche dichotomique pour trouver indice des 2 sommets de chaque arete dans le vector lieux
             int d=tmp2.size()-1;
             Noeud* n1;
             Noeud* n2;
-//            std::cout << "-------------------------------------  : "<<endl;
-//            std::cout << "taille de tmp2   : "<<d+1<<std::endl;
-//            std::cout << "taille de noeuds  : "<<monGraphe->noeuds().size();
 
             if (d>0){
                 for (int k=1;k<= d;k++){
                     n1=tmp2[k-1];
                     n2=tmp2[k];
-                   int i=indicePosition(0,monGraphe->noeuds().size()-1,n1);
 
-//cout << *tmp2[k] << endl;
-
+                    int i=indicePosition(0,monGraphe->noeuds().size()-1,n1);
                     int j=indicePosition(0,monGraphe->noeuds().size()-1,n2);
-//                    cout << "-------------------"<<endl;
-//                    cout << i<<endl;
-//                    cout << j<<endl;
 
-                    //                    //Avec 2 indices : A[i][j] = 1;
+                    //Avec 2 indices : A[i][j] = 1;
                     updateMadj(i+1,j+1); //decalage
-                    updateMadj(j+1,i+1); //non orienté
-                   }
+                    updateMadj(j+1,i+1); //non orienté stockage des deux arcs orientés
+                }
             }
 
 
@@ -461,19 +454,27 @@ void Manipulateur::creerGraphe(const Gpx& g){
             tmp2.clear();
         }
     }
+    //libérer la mémoire => vider les vecteurs tmp et lieux sans supprimer les objets pointés
+        while(!tmp.empty()){
+            tmp.pop_back();
+        }
+        tmp2.clear();
+        while(!lieux.empty()){
+            lieux.pop_back();
+        }
+        lieux.clear();
+    //    //fin recuperer les aretes
 
-//    //fin recuperer les aretes
-
-//    //libérer la mémoire
-//    while(!tmp.empty()){
-//        delete tmp.back();
-//        tmp.pop_back();
-//    }
+    //    //libérer la mémoire
+    //    while(!tmp.empty()){
+    //        delete tmp.back();
+    //        tmp.pop_back();
+    //    }
 
     //afficher adj
-afficheAdj();
+    //afficheAdj();
 
-//    //creer aretes
+    //    //creer aretes
     int nb = monGraphe->noeuds().size();
     for(int i=1;i<=nb;i++){
         for(int j=1;j<=nb;j++){
@@ -481,9 +482,18 @@ afficheAdj();
                 monGraphe->addArete(new Arete(monGraphe->aretes().size()+1,monGraphe->getNoeud(i),monGraphe->getNoeud(j)));
 
         }
-          }
-    std::cout << "-------------------------------------  : "<<endl;
-    std::cout << "taille de aretes  : "<< monGraphe->aretes().size()<< std::endl;
+    }
+
+
+
+
+//    std::cout << "-------------------------------------  : "<<endl;
+//    std::cout << "taille de graphe->noeuds : "<<monGraphe->noeuds().size()<<std::endl;
+//    std::cout << "taille de aretes  : "<< monGraphe->aretes().size()<< std::endl;
+//    std::cout << "taille de lieux   : "<< lieux.size()<< std::endl;
+//    std::cout << "taille de tmp   : "<< tmp.size()<< std::endl;
+//    std::cout << "taille de tmp2   : "<< tmp2.size()<< std::endl;
+
 
 }
 
@@ -507,8 +517,7 @@ void Manipulateur::updateMadj(const int i, const int j){ M_adj[i][j] = 1; }
 void Manipulateur::initMadj(){
     //recuperer le nombre de noeuds contenus dans le graphe
     int n = monGraphe->noeuds().size();
-    std::cout << "taille de vnoeuds : "<<n<<std::endl;
-    //allocation mÃ©moire de la matrice adj
+     //allocation mÃ©moire de la matrice adj
     M_adj = new int*[n+1] ;
 
     for( int i = 0 ; i < n+1 ; i++ )
@@ -542,219 +551,17 @@ void Manipulateur::updateArete(){
             {
                 monGraphe->addArete(new Arete(monGraphe->aretes().size()+1,monGraphe->getNoeud(i),monGraphe->getNoeud(j)));
             }
+        }
     }
- }
 
 }
 
 void Manipulateur::testGraphe()
 {
-    /* Lieu l1 =  Lieu(1,50.45,7.33,280.0);
-    Lieu l2 =  Lieu(2,47.48,7.33,260.0);
-
-
-    Portion p = Portion(1,&l1,&l2,0,0,0);
-
-    //std::cout << p <<std::endl;
-    std::cout << p.distance() <<std::endl;
-       std::cout << p.denivele() <<std::endl;
-   std::cout << p.pente() <<std::endl;
-    std::cout << p.denivele_montant() <<std::endl;
-    std::cout << p.duree() <<std::endl;
-
-       std::cout <<  l1 <<std::endl;
-        std::cout << l2 <<std::endl;
-
-        vector<Arete*> tab_Aretes;
-
-        tab_Aretes.push_back(A1);
-        tab_Aretes.push_back(A2);
-        tab_Aretes.push_back(A3);
-
-*/
-
-    /* Graphe G1(tab_Aretes);
-        cout << "affichage du graphe :" <<  endl ;
-        cout << G1  <<  endl ;
-
-        Lieu L1(1,3.4,2.2,1.2,"Lieu 1")  ;
-
-        cout << "affichage du Lieu :" <<  endl ;
-        cout << L1 <<  endl ;
-
-        Portion* P1 = new Portion(1,&n1,&n2,2,3,7);
-
-        cout << "affichage de la portion  :" <<  endl ;
-        cout << *P1 ;
-*/
-    Graphe gr = Graphe();
+//    Graphe gr = Graphe();
 }
 void Manipulateur::testGPX(){	
-    /*FILE *f = fopen("test.gpx","r");
-if(!f) cout<<"What the fuck"<<endl;
-for(int i=0;i<100;i++){
-    char c = fgetc(f);
-    cout<<c;
-}
-cout<<endl;
 
-fclose(f);
-Gpx g=lireGPX("test.gpx");
-*/
-    /*
- std::vector<TrkPt> w;
-    w.push_back(TrkPt());
-    w.push_back(TrkPt(47.918932,7.244968,242));
-    w.push_back(TrkPt(47.918493,7.245513,242));
-    w.push_back(TrkPt(47.917478,7.243347,243));
-    w.push_back(TrkPt());
-    w.push_back(TrkPt(47.918493,7.225513,242));
-    w.push_back(TrkPt(47.918493,17.245513,242));
-    w.push_back(TrkPt(45.918493,7.245513,242));
-    vector<Noeud*> tmp,tmp2,lieux;
-    
-
-    std::vector<TrkSeg> z;
-    z.push_back(w);
-
-    Trk t1=Trk("test 1",z);
-    //z.push_back(w);
-
-    std::vector<Trk> vtrk;
-    vtrk.push_back(t1);
-
-
-    //for(auto i:vtrk) std::cout << i <<",";
-    Gpx g=Gpx(vtrk);
-    //std::cout << g;
-    g.ajouterTrack(t1);
-    std::cout << g;
-    */
-    /*
-    //ok fait lors de la lecture du gpx
-        //debut recuperer les sommets et les ajouter dans le vecteur de noeuds
-        for (auto t : g.tracks())
-        {
-
-            for(auto u : t.segments())
-            {
-                for(auto x : u.points())
-                {
-                    //tmp2.push_back(new Lieu(0,x.lattitude(),x.longitude(),x.altitude()));
-                    tmp.push_back(new Lieu(0,x.lattitude(),x.longitude(),x.altitude()));
-
-                }
-
-            }
-        }
-
-
-
-    for(unsigned int i=0;i<tmp.size();i++){
-        cout<<"["<<tmp[i]->get_lattitude()<<","<<tmp[i]->get_longitude()<<","<<tmp[i]->get_altitude()<<"]"<<endl;
-    }
-    
-    //trier les noeuds par ordre croissant
-    Noeud* aux;
-    for(unsigned int i=0;i<(tmp.size()-1);i++){
-        for(unsigned int j=i;j<tmp.size();j++){
-            if(tmp[i]->get_lattitude()>tmp[j]->get_lattitude()){
-                aux = tmp[i];
-                tmp[i] = tmp[j];
-                tmp[j] = aux;
-            }
-            else{
-                if(tmp[i]->get_lattitude()==tmp[j]->get_lattitude()){
-                    if(tmp[i]->get_longitude()>tmp[j]->get_longitude()){
-                        aux = tmp[i];
-                        tmp[i] = tmp[j];
-                        tmp[j] = aux;
-                    }
-                }
-            }
-        }
-    }
-    cout<<"Apres avoir trie"<<endl;
-    
-    //suppression des doublons
-    lieux.push_back(tmp[0]);
-    int k=0;
-    cout<<"["<<tmp[0]->get_lattitude()<<","<<tmp[0]->get_longitude()<<","<<tmp[0]->get_altitude()<<"]"<<endl;
-    for(unsigned int i=1;i<tmp.size();i++){
-        cout<<"["<<tmp[i]->get_lattitude()<<","<<tmp[i]->get_longitude()<<","<<tmp[i]->get_altitude()<<"]"<<endl;
-        if(tmp[i]->get_lattitude()!=lieux[k]->get_lattitude()&&tmp[i]->get_longitude()!=lieux[k]->get_longitude()){
-            lieux.push_back(tmp[i]);
-            k++;
-        }
-
-    }
-    cout<<"Apres avoir enleve doublons"<<endl;
-    for(unsigned int i=0;i<lieux.size();i++){
-        cout<<"["<<lieux[i]->get_lattitude()<<","<<lieux[i]->get_longitude()<<","<<lieux[i]->get_altitude()<<"]"<<endl;
-    }
-    //fin recuperer les sommets
-
-
-    //debut recuperer les aretes
-    //int n = lieux.size()
-    //int **A
-    for (auto t : g.tracks())
-    {
-
-        for(auto u : t.segments())
-        {
-            for(auto x : u.points())
-            {
-                tmp2.push_back(new Lieu(0,x.lattitude(),x.longitude(),x.altitude()));
-                //tmp.push_back(new Lieu(0,x.lattitude(),x.longitude(),x.altitude()));
-
-            }
-            //parcourir tmp2
-            //recherche dichotomique pour trouver indice des 2 sommets de chaque arete dans le vector lieux
-            //Avec 2 indices : A[i][j] = 1;
-
-            //fin de segment
-            //for() delete tmp2[i]
-            //tmp2.clear()
-
-        }
-    }
-    //fin recuperer les aretes
-
-    for(unsigned int i=0;i<tmp.size();i++){
-
-    }
-    
-    while(!tmp.empty()){
-        delete tmp.back();
-        tmp.pop_back();
-    }
-
-
-
-}
-
-// on suppose gj.member() != nullptr
-
-std::vector<Arete> &Manipulateur::aretes(const GJObject &gjo){
-    std::vector<Arete> tmp;
-    std::string name ;
-  //  std::cout << type;
-
-
-    //recuperer le vecteur de positions pour chaque element
-      if ( (name =  gjo.name()).find("Collection") != std::string::npos) // c'est une collection
-    {
-          for (auto t : gjo.member()-> )
-          {
-              tmp.push_back();
-          }
-
-    std::cout << std::endl <<"c'est une collection !"<<std::endl;
-    }
-    else //ce n'est pas une collection
-        std::cout<< std::endl<< "ce n'est pas une collection !"<<std::endl;
-*/
 }
 
 
