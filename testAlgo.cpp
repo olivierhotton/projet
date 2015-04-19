@@ -1,6 +1,6 @@
 #include "Algorithme.h"
-
 #include <iostream>
+
 using namespace std;
 using namespace algo_ns;
 /* run this program using the console pauser or add your own getch, system("pause") or input loop */

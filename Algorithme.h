@@ -2,6 +2,7 @@
 #define ALGORITHME_H
 
 namespace algo_ns{
+	
 typedef struct {
 	int s,t;
 	long cout;
