@@ -23,8 +23,12 @@ class Lieu : public Noeud  {
 
      Lieu& operator=(const Lieu& ) = default;
      bool operator!=(const Lieu& n)   const;
+     //bool operator==(Noeud* n)   const override;
+    // bool operator<(Noeud* n)   const override;
+    // bool operator<=(Noeud* n)   const override;
      bool operator==(const Lieu& n)   const;
      bool operator<(const Lieu& l) const;
+    bool operator<=(const Lieu& l) const;
    //  bool operator<(Lieu* l) const;
 
      void print(std::ostream& ost) const override;
@@ -35,7 +39,7 @@ class Lieu : public Noeud  {
      double get_lattitude() const override ;
      double get_longitude() const override ;
      double get_altitude() const override;
-     string get_nom() const;
+     string get_nom() const override;
 
 
      ~Lieu() ;

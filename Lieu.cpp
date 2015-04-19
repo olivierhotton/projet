@@ -19,7 +19,27 @@ bool Lieu::operator==(const Lieu& l) const
     return ( d_lattitude == l.d_lattitude && d_longitude == l.d_longitude && d_altitude == l.d_altitude && d_nom == l.d_nom ) ;
 
     }
+/*
+bool Lieu::operator==(Noeud* n) const
+    {
+    return (  d_idNoeud == n->get_id() && d_lattitude == n->get_lattitude() && d_longitude == n->get_longitude()&& d_altitude == n->get_altitude() && d_nom == n->get_nom() ) ;
 
+    }
+
+bool Lieu::operator<(Noeud* n) const
+    {
+    return (  d_lattitude < n->get_lattitude()
+              ||  (d_lattitude == n->get_lattitude() &&  d_longitude < n->get_longitude())
+              ||  (d_lattitude == n->get_lattitude() &&  d_longitude == n->get_longitude() && d_altitude < n->get_altitude())
+           );
+
+    }
+
+bool Lieu::operator <=(Noeud* n) const{
+
+    return *this== n || *this <n;
+}
+*/
     bool Lieu::operator!=(const Lieu& l) const
      {
       return !(*this == l ) ;
@@ -48,6 +68,7 @@ bool Lieu::operator==(const Lieu& l) const
             }
         else return false;
     }
+    bool Lieu::operator <=(const Lieu& l) const {return *this<l || *this == l;}
 
 
     double Lieu::get_lattitude() const { return d_lattitude ;  }

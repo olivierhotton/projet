@@ -34,19 +34,21 @@ namespace manip_ns{
             void GNO2GO();
             void graphe2fs_aps();
             void graphe2tableau_aretes();
-            Graphe& creerGraphe();
-            void creerLieux(const std::vector<Position>& vl);
-            void trierLieux(); // par ordre croissant sans doublon
+            void creerGraphe(const Gpx& g);
+            void ajouterLieu(int i, double lattitude, double longitude, double altitude, const std::string& nom);
+          //  void creerLieux(const std::vector<Position>& vl);
+
+            //void trierLieux(); // par ordre croissant sans doublon
             void renumeroterLieux();
             /* Algo */
             double coutChemin(vector<int> indiceAretes);
             double miseAJourCout(int modeCalcul); // entier contenant le mode de calcul
             bool contientCircuit();
             bool orienteON();
-            void updateMadj(const int id1, const int id2); // n = nombre de sommets du graphes
+            void updateMadj(const int i, const int j); // n = nombre de sommets du graphes
             void initMadj();
-
-            static int indicePosition(const Position& pos, const std::vector<Position>& vpos);
+            void afficheAdj() const;
+            int indicePosition(int g, int d, Noeud* n);
             /* Gpx */
             static std::string recupererChampGPX(std::string& s,const std::string& tag);
             static Gpx lireGPX(const std::string& str); // lit un fichier GPX et retourne un objet gpx
@@ -57,9 +59,9 @@ namespace manip_ns{
             /* Geojson */
             void ecrire_fichier(); //ecrire un fichier geojson
 
-            static std::vector<Position> positionAsc(const GeoJson& gj); // par ordre croissant sans doublon
+            //static std::vector<Position> positionAsc(const GeoJson& gj); // par ordre croissant sans doublon
 
-           // static void creerArete(const GeoJson& gj); // n = nombre de sommets du graphes
+            void updateArete(); // maj vecteur arete a partir de m_adj
 
             // static std::vector<Arete>& aretes(const Position& p1, const Position& p2);//a faire pour mise a jour du graphe
 
