@@ -1173,7 +1173,7 @@ void Algorithme::matrix2all(int **a,int *&fs,int *&aps,int *&poids){
     for(int i=1;i<=n;i++){
         aps[i] = k;
         for(int j=1;j<=n;j++){
-            if(a[i][j]<INT_MAX){
+            if(a[i][j]<INT_MAX&&i!=j){
                 fs[k] = j;
                 poids[k] = a[i][j];
                 k++;
