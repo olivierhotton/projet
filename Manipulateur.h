@@ -83,8 +83,8 @@ namespace manip_ns{
 	
             Graphe* monGraphe;
 		    vector<Arete> tabAretes; 
-		    vector<int> fs;
-		    vector<int> aps;
+            int* fs;
+            int* aps;
             int** M_adj;
 		    vector<double> tabCouts; // couts des aretes
 
