@@ -579,7 +579,7 @@ void Manipulateur::testGeoJSON(){
 
 
 void Manipulateur::testAlgo(){
-
+/*
     int *fs,*aps,**cout1,s,*pred,*d;
     int n = 7;
     int m = 12;
@@ -903,10 +903,10 @@ void Manipulateur::testAlgo(){
     for(int i=0;i<m;i++){
         cout<<"["<<g[i].s<<","<<g[i].t<<","<<g[i].cout<<"]"<<endl;
     }
-    delete(g);
+    delete(g);*/
 }
 
-void Manipulateur::supprime_sommet(int *fs,int *aps,int index,vector<arete> &g){
+void Manipulateur::supprime_sommet(int *fs,int *aps,int index,vector<algo_ns::arete> &g){
 	int n = aps[0];
 	int l,t;
 	arete elem;

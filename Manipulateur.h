@@ -70,7 +70,7 @@ namespace manip_ns{
             /* Fichiers */
 
             /* Affichage */
-			void supprime_sommet(int *fs,int *aps,int index,vector<arete> &g);
+            void supprime_sommet(int *fs,int *aps,int index,vector<algo_ns::arete> &g);
             static void testGraphe();
             static void testGPX();
             static void testGeoJSON();
