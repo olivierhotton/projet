@@ -1,4 +1,5 @@
 #include "Manipulateur.h"
+#include <vector>
 using namespace gpx_ns;
 using namespace geojson_ns;
 using namespace algo_ns;
@@ -638,7 +639,17 @@ void Manipulateur::testAlgo(){
     s = 1;
 
     Algorithme algo;
-
+	
+	
+	vector<arete> va;
+	int index = 5;
+	algo.supprime_sommet(fs,aps,index,va);
+	cout<<"****Test suppression d'un sommet****"<<endl;
+	for(int i=0;i<va.size();i++){
+		cout<<va[i].s<<" -> "<<va[i].t<<endl;
+	}
+	cout<<endl;
+	
     algo.dijkstra(fs,aps,cout1,s,pred,d);
     cout<<"****Test Djikstra****"<<endl;
     cout<<"pred : ["<<pred[1];
@@ -893,4 +904,33 @@ void Manipulateur::testAlgo(){
         cout<<"["<<g[i].s<<","<<g[i].t<<","<<g[i].cout<<"]"<<endl;
     }
     delete(g);
+}
+
+void Manipulateur::supprime_sommet(int *fs,int *aps,int index,vector<arete> &g){
+	int n = aps[0];
+	int l,t;
+	arete elem;
+	for(int i=1;i<index;i++){
+		l = aps[i];
+		while((t=fs[l])!=0){
+			if(t!=index){
+				elem.s = i;
+				elem.t = t;
+				g.push_back(elem);
+			}
+			l++;
+		}
+	}
+	for(int i=index+1;i<=n;i++){
+		l = aps[i];
+		while((t=fs[l])!=0){
+			if(t!=index){
+				elem.s = i;
+				elem.t = t;
+				g.push_back(elem);
+			}
+			l++;
+		}
+	}
+	
 }

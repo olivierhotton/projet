@@ -4,6 +4,7 @@
 #include <climits>
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include "Gpx.h"
 #include "Geojson.h"
 #include "Graphe.h"
@@ -69,7 +70,7 @@ namespace manip_ns{
             /* Fichiers */
 
             /* Affichage */
-
+			void supprime_sommet(int *fs,int *aps,int index,vector<arete> &g);
             static void testGraphe();
             static void testGPX();
             static void testGeoJSON();
