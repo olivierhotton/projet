@@ -28,6 +28,10 @@ namespace manip_ns{
      **/
             Manipulateur(Graphe *g=new Graphe(), GeoJson* gj=nullptr);
            // Manipulateur();
+            /* Controle */
+            int det_structure(); // détermine la structure utilisée parmi les fs,aps,poids et la matrice d'adjacent et la liste des aretes
+            void choisir_structure(int i); // initialise le ou les élément(s) de la structure choisie, vide celui ou ceux de l'autre
+            void afficher_structure(); // affiche la structure utilisée
 
             /* Graphe */
             static std::vector<Lieu> lieux(); //retourne la liste triée des sommets du graphe
@@ -83,9 +87,19 @@ namespace manip_ns{
             Graphe* monGraphe;
             GeoJson* monGeoJson;
 		    vector<Arete> tabAretes; 
+<<<<<<< HEAD
             int* fs;
             int* aps;
+=======
+            arete* g;
+            int n; // nombre de sommets
+            int m; // nombre d'aretes
+            int* fs;
+            int* aps;
+            int* poids;
+>>>>>>> origin/master
             int** M_adj;
+            principale* pri;
 		    vector<double> tabCouts; // couts des aretes
 
 

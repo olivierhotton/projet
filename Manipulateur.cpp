@@ -933,3 +933,169 @@ void Manipulateur::supprime_sommet(int *fs,int *aps,int index,vector<algo_ns::ar
 	}
 	
 }
+
+/*
+ * Controle
+ * */
+int Manipulateur::det_structure(){
+    if(aps)
+        //les fs,aps,poids sont utilisé
+        return 1;
+    if(M_adj)
+        //la matrice d'ajacence est utilisée
+        return 2;
+    if(g)
+        //la liste des aretes est utilisée
+        return 3;
+    //la liste principale et la liste secondaire sont utilisées
+    return 4;
+}
+
+void Manipulateur::choisir_structure(int i){
+    Algorithme algo;
+    int courant = det_structure();
+    if(courant == 3){
+        int **a,*fs_tmp,*aps_tmp,*poids_tmp;
+        algo.aretes2matrix(g,a,n,m);
+        switch(i){
+            case 1:
+                algo.matrix2all(a,fs,aps,poids);
+                algo.del_matrice(a);
+                delete [] g;
+                break;
+            case 2:
+                M_adj = a;
+                delete [] g;
+                break;
+            case 4:
+                algo.matrix2all(a,fs_tmp,aps_tmp,poids_tmp);
+                algo.del_matrice(a);
+                algo.all2lists(fs_tmp,aps_tmp,poids_tmp,pri);
+                algo.del_fs_aps_poids(fs_tmp,aps_tmp,poids_tmp);
+                delete [] g;
+                break;
+            default:
+                cout<<"ERREUR : Structure indéterminée"<<endl;
+                break;
+        }
+    }
+    else{
+        if(courant == 1){
+            if(i == 4){
+                algo.all2lists(fs,aps,poids,pri);
+                algo.del_fs_aps_poids(fs,aps,poids);
+            }
+            else{
+                int **a;
+                algo.all2matrix(fs,aps,poids,a);
+                switch(i){
+                    case 2:
+                        M_adj = a;
+                        algo.del_fs_aps_poids(fs,aps,poids);
+                        break;
+                    case 3:
+                        if(algo.estSymetrique(a)){
+                            algo.matrix2aretes(a,g,n,m);
+                            algo.del_fs_aps_poids(fs,aps,poids);
+                        }
+                        else{
+                            cout<<"ERREUR : Impossible de passer de la structure du graphe orienté vers celle du non orienté"<<endl;
+                        }
+                        algo.del_matrice(a);
+                        break;
+                    default:
+                        cout<<"ERREUR : Structure indéterminée"<<endl;
+                        break;
+                }
+            }
+        }
+        else{
+            if(courant == 2){
+                if(i == 4){
+                    int *fs_tmp,*aps_tmp,*poids_tmp;
+                    algo.matrix2all(M_adj,fs_tmp,aps_tmp,poids_tmp);
+                    algo.del_matrice(M_adj);
+                    algo.all2lists(fs_tmp,aps_tmp,poids_tmp,pri);
+                    algo.del_fs_aps_poids(fs_tmp,aps_tmp,poids_tmp);
+                }
+                else{
+                    switch(i){
+                        case 1:
+                            algo.matrix2all(M_adj,fs,aps,poids);
+                            algo.del_matrice(M_adj);
+                            break;
+                        case 3:
+                            if(algo.estSymetrique(M_adj)){
+                                algo.matrix2aretes(M_adj,g,n,m);
+                                algo.del_matrice(M_adj);
+                            }
+                            else{
+                                cout<<"ERREUR : Impossible de passer de la structure du graphe orienté vers celle du non orienté"<<endl;
+                            }
+                            break;
+                        default:
+                            cout<<"ERREUR : Structure indéterminée"<<endl;
+                    }
+                }
+            }
+            else{
+                if(courant == 4){
+                    int **a,*fs_tmp,*aps_tmp;
+                    algo.lists2all(pri,fs_tmp,aps_tmp,poids);
+                    switch(i){
+                        case 1:
+                            fs = fs_tmp;
+                            aps = aps_tmp;
+                            algo.del_lists(pri);
+                            break;
+                        case 2:
+                            algo.all2matrix(fs_tmp,aps_tmp,poids,M_adj);
+                            algo.del_fs_aps_poids(fs_tmp,aps_tmp,poids);
+                            algo.del_lists(pri);
+                            break;
+                        case 3:
+                            algo.all2matrix(fs_tmp,aps_tmp,poids,a);
+                            algo.del_fs_aps_poids(fs_tmp,aps_tmp,poids);
+                            if(algo.estSymetrique(a)){
+                                algo.matrix2aretes(a,g,n,m);
+                                algo.del_lists(pri);
+                            }
+                            else{
+                                cout<<"ERREUR : Impossible de passer de la structure du graphe orienté vers celle du non orienté"<<endl;
+                            }
+                            algo.del_matrice(a);
+                            break;
+                        default:
+                            cout<<"ERREUR : Structure indéterminée"<<endl;
+                            break;
+                    }
+                }
+                else{
+                    cout<<"ERREUR!"<<endl;
+                }
+            }
+        }
+    }
+}
+
+void Manipulateur::afficher_structure(){
+    int courant = det_structure();
+    Algorithme algo;
+    switch(courant){
+        case 1:
+            algo.affiche_fs_aps_poids(fs,aps,poids);
+            break;
+        case 2:
+            algo.affiche_matrice(M_adj);
+            break;
+        case 3:
+            algo.affiche_aretes(g,n,m);
+            break;
+        case 4:
+            algo.affiche_lists(pri);
+            break;
+        default:
+            cout<<"ERREUR!"<<endl;
+            break;
+    }
+}
