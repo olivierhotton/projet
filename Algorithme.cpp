@@ -1079,7 +1079,9 @@ void Algorithme::prim(arete *g,int n,int m,int s,arete *&t){
     X[s] = true;
     int min_k,l=0;
     long min;
+
     //arete a;
+
     while(l<(n-1)){
         min = INT_MAX;
         unsigned int k=0;

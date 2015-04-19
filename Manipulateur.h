@@ -16,6 +16,7 @@
 
 using namespace gpx_ns;
 using namespace geojson_ns;
+using namespace algo_ns;
 
 namespace manip_ns{
 
@@ -91,7 +92,8 @@ namespace manip_ns{
             int* fs;
             int* aps;
 
-            algo_ns::arete* g;
+
+            arete* g;
             int n; // nombre de sommets
             int m; // nombre d'aretes
             int* poids;
