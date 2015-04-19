@@ -299,7 +299,7 @@ void Manipulateur::afficheAdj()const{
 
     std::cout << std::endl;
 
-    for(int i=0;i<=nb;i++){
+    for(int i=1;i<=nb;i++){
         for(int j=0;j<=nb;j++){
             if (M_adj[i][j] == 1)
                 std::cout << "[1] ";
@@ -490,7 +490,7 @@ void Manipulateur::creerGraphe(const Gpx& g){
     //    std::cout <<*t<<std::endl;
     //        std::cout << t->getNoeud1()->get_id() << " : " << t->getNoeud2()->get_id() <<std::endl;
     //   std::cout << t->getNoeud1() << " : " << t->getNoeud2()<<std::endl;
-    //afficheAdj();
+   // afficheAdj();
 
 }
 
