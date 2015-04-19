@@ -28,7 +28,9 @@ namespace manip_ns{
      **/
             Manipulateur(Graphe *g=new Graphe());
            // Manipulateur();
-
+            /* Controle */
+            int det_structure(); // détermine la structure utilisée parmi les fs,aps,poids et la matrice d'adjacent et la liste des aretes
+            void choisir_structure(int i); // initialise le ou les élément(s) de la structure choisie, vide celui ou ceux de l'autre
             /* Graphe */
             static std::vector<Lieu> lieux(); //retourne la liste triée des sommets du graphe
             void afficher_fsaps();
@@ -83,9 +85,14 @@ namespace manip_ns{
 	
             Graphe* monGraphe;
 		    vector<Arete> tabAretes; 
+            arete* g;
+            int n; // nombre de sommets
+            int m; // nombre d'aretes
             int* fs;
             int* aps;
+            int* poids;
             int** M_adj;
+            principale* pri;
 		    vector<double> tabCouts; // couts des aretes
 
 
