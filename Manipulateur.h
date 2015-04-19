@@ -26,7 +26,7 @@ namespace manip_ns{
     /*
      * Constructeur
      **/
-            Manipulateur(Graphe *g=new Graphe());
+            Manipulateur(Graphe *g=new Graphe(), GeoJson* gj=nullptr);
            // Manipulateur();
 
             /* Graphe */
@@ -37,9 +37,6 @@ namespace manip_ns{
             void graphe2tableau_aretes();
             void creerGraphe(const Gpx& g);
             void ajouterLieu(int i, double lattitude, double longitude, double altitude, const std::string& nom);
-          //  void creerLieux(const std::vector<Position>& vl);
-
-            //void trierLieux(); // par ordre croissant sans doublon
             void renumeroterLieux();
             /* Algo */
             double coutChemin(vector<int> indiceAretes);
@@ -54,7 +51,7 @@ namespace manip_ns{
             static std::string recupererChampGPX(std::string& s,const std::string& tag);
             static Gpx lireGPX(const std::string& str); // lit un fichier GPX et retourne un objet gpx
 
-            void toGeoJSON(const Gpx& g); //devrait retourner un geoJSON mais plante
+            void toGeoJSON(); //devrait retourner un geoJSON mais plante
 
 
             /* Geojson */
@@ -77,14 +74,17 @@ namespace manip_ns{
             static void testAlgo();
            //static std::vector<Arete *> creerArete(const std::vector<Arete>& va);
 
+            /* Manipulation de données */
 
+            void trier(std::vector<Noeud *> &tmp);
 
      private :
 	
             Graphe* monGraphe;
+            GeoJson* monGeoJson;
 		    vector<Arete> tabAretes; 
-		    vector<int> fs;
-		    vector<int> aps;
+            int* fs;
+            int* aps;
             int** M_adj;
 		    vector<double> tabCouts; // couts des aretes
 

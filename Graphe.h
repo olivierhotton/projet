@@ -43,7 +43,7 @@ class Graphe{
 
 std::ostream& operator<<(std::ostream& , const Graphe& );
 std::istream& operator>>(std::istream& , Graphe& );
-
+//std::ostream& operator<<(std::ostream& o, std::vector<Arete*> a );
 
 
 

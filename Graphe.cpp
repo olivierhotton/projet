@@ -36,6 +36,10 @@ g.print(ost);
 return ost;
 }
 
+//ostream& operator <<(std::ostream& o, std::vector<Arete*> a){
+
+//}
+
 vector<Noeud*>& Graphe::noeuds() {
     return d_tabNoeuds;
 }

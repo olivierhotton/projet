@@ -6,7 +6,7 @@ using namespace algo_ns;
 using namespace manip_ns;
 using namespace std;
 
-Manipulateur::Manipulateur(Graphe* g):monGraphe(g){}
+Manipulateur::Manipulateur(Graphe* g, GeoJson* gj):monGraphe(g),monGeoJson(gj){}
 //Manipulateur::Manipulateur():monGraphe(nullptr){}
 
 /*
@@ -170,56 +170,6 @@ Gpx Manipulateur::lireGPX(const std::string& str){
 }
 
 
-/* renvoit un vecteur de positions triÃ© sans doublon
- *
- * */
-/*
-std::vector<Position> Manipulateur::positionAsc(const GeoJson &gj){
-
-
-    std::vector<Position> tmp;
-    std::vector<Position> pos;
-    int nb;
-
-
-    tmp = gj.member()->positions();
-
-
-    //on trie les points ordre croissant
-    sort(tmp.begin(),tmp.end());
-
-
-//    //on supprime les doublons
-
-
-    for(int i=1;i<= (nb=tmp.size()-1);i++)
-    {
-        if(tmp[i-1] != tmp[i]) // inutile de garder les doublons
-        {
-            pos.push_back(tmp[i-1]);
-        }
-    }
-    if(tmp[nb-1] != tmp[nb]) // dernier element
-    {
-        pos.push_back(tmp[nb]);
-    }
-
-
-    return pos;
-
-}
-*/
-/*
- * trier lieux
- * */
-
-
-/* renvoit un vecteur de positions triÃ© sans doublon
- *
- * */
-//void Manipulateur::trierLieux(){
-//
-//}
 
 
 void Manipulateur::renumeroterLieux(){
@@ -258,108 +208,120 @@ int Manipulateur::indicePosition(int g, int d, Noeud *n)
  * Changer pour return Geojson
  * */
 
-void Manipulateur::toGeoJSON(const Gpx& g){
-
-    // if (monGraphe != nullptr) std::cout << "coucou" <<std::endl;
+void Manipulateur::toGeoJSON(){
 
 
-    std::vector<Trk> tr;
-    std::vector<TrkSeg> trs;
-    std::vector<TrkPt> trp;
 
-    // Position p;
-    LineString l= LineString();
     MultiLineString mls = MultiLineString();
     FeatureCollection fc = FeatureCollection();
     Feature f = Feature();
-    tr = g.tracks();
+    Position p;
+
+int i,j;
+    //debut recuperer les aretes
 
 
-    //pour chaque track
-    for (auto i: tr){
-        //rÃ©cupÃ©rer le nom de la track
+/* ajouter chaque arete */
+        for(auto u : monGraphe->aretes()) //pour chaque arete
+        {
 
-        //rÃ©cupÃ©rer les segments
+     LineString l= LineString();
 
+     //ne pas tracer les doubles orientations i->j et j->i
+     if((i=u->getNoeud1()->get_id()) < (j=u->getNoeud2()->get_id()))
 
-        trs = i.segments();
-        //rÃ©cupÃ©rer un segment
-        for (auto j: trs){
-            //rÃ©cupÃ©rer les points du segment
-            //  std::cout << "Segment\n";
-            trp = j.points();
+//     i=u->getNoeud1()->get_id();
+//      j=u->getNoeud2()->get_id();
 
+     {
 
+         p=Position(u->getNoeud1()->get_lattitude(),u->getNoeud1()->get_longitude(),u->getNoeud1()->get_altitude());
+   l.addPosition(p);
+   std::cout <<i<< " vers ";
+         p=Position(u->getNoeud2()->get_lattitude(),u->getNoeud2()->get_longitude(),u->getNoeud2()->get_altitude());
+  l.addPosition(p);
+  std::cout << j << std::endl;
 
-            //rÃ©cupÃ©rer un point du segment     g.getTrack(0).getSegment(0).getPoint(0)
+         mls.addLineString(l);
+     }
 
-            for (unsigned int k=0;k< trp.size();k++){
-                l.addPosition(Position(trp[k].lattitude(),trp[k].longitude(),trp[k].altitude()));
-
-            }
-            //std::cout << l;
-            mls.addLineString(l);
 
         }
+                std::cout << std::endl;
+afficheAdj();
+/* ajouter tous les points sur un meme segment */
+//for(auto u : monGraphe->noeuds()) //pour chaque arete
+//{
 
-        f.setMember(&mls);
-        // std::cout << f;
-        fc.addFeature(&f);
-    }
+//LineString l= LineString();
 
-    GeoJson gj = GeoJson(&fc);
-    // std::cout << gj;
+////ne pas tracer les doubles orientations i->j et j->i
+////if((i=u->get_id()) < (j=u->get_id()))
+//{
 
+// p=Position(u->get_lattitude(),u->get_longitude(),u->get_altitude());
+//l.addPosition(p);/*
+//std::cout <<i<< " vers ";
+// p=Position(u->get_lattitude(),u->get_longitude(),u->get_altitude());
+//l.addPosition(p);
+//std::cout << j << std::endl;*/
 
+// mls.addLineString(l);
+//}
+//}
 
-    createFile("C:/Users/oliv/Documents/L3_INFO/Projet_GA/test_conversion.geojson",gj);
+f.setMember(&mls);
+           fc.addFeature(&f);
+
+std::cout <<  monGraphe->aretes().size()<< std::endl;
+
+    if (monGeoJson != nullptr) delete monGeoJson;
+    monGeoJson = new GeoJson(&fc);
+    // std::cout << *monGeoJson ;
+
+    createFile("C:/Users/oliv/Documents/L3_INFO/Projet_GA/test_conversion.geojson",*monGeoJson);
 
 
 }
 
 
 void Manipulateur::afficheAdj()const{
-    int nb = monGraphe->noeuds().size();
-    std::cout << M_adj[0][0] <<"\n";
+    int nb = M_adj[0][0];
+   // std::cout << M_adj[0][0] <<"\n";
+
+    for(int i=0;i<=nb;i++){
+         if (i<2)
+                std::cout << "[" << M_adj[0][i]<<"] ";
+            else
+              {
+                 std::cout << "[0] ";
+            }
+
+
+        }
+
+        std::cout << std::endl;
+
     for(int i=0;i<=nb;i++){
         for(int j=0;j<=nb;j++){
             if (M_adj[i][j] == 1)
                 std::cout << "[1] ";
             else
-                std::cout << "[0] ";
-
+              {
+                 std::cout << "[0] ";
+            }
         }
+
         std::cout << std::endl;
     }
 }
 
 /*
- * Creer graphe a partir d'un objet gpx
+ * Trier vecteur de noeud*
  *
  * */
 
-void Manipulateur::creerGraphe(const Gpx& g){
-
-    std::vector<Noeud*> lieux, tmp,tmp2;
-    //ok fait lors de la lecture du gpx
-    //debut recuperer les sommets et les ajouter dans le vecteur de noeuds temporaire non trié avec doublons
-    for (auto t : g.tracks())
-    {
-        for(auto u : t.segments())
-        {
-            for(auto x : u.points())
-            {
-                tmp.push_back(new Lieu(0,x.lattitude(),x.longitude(),x.altitude()));
-            }
-        }
-    }
-
-
-    for(unsigned int i=0;i<tmp.size();i++){
-        cout<<"["<<tmp[i]->get_lattitude()<<","<<tmp[i]->get_longitude()<<","<<tmp[i]->get_altitude()<<"]"<<endl;
-    }
-
-    //trier les noeuds par ordre croissant
+void Manipulateur::trier(std::vector<Noeud *> &tmp){
     Noeud* aux;
     for(unsigned int i=0;i<(tmp.size()-1);i++){
         for(unsigned int j=i;j<tmp.size();j++){
@@ -379,7 +341,42 @@ void Manipulateur::creerGraphe(const Gpx& g){
             }
         }
     }
-    cout<<"Apres avoir trie"<<endl;
+}
+
+/*
+ * Creer graphe a partir d'un objet gpx
+ *
+ * */
+
+void Manipulateur::creerGraphe(const Gpx& g){
+
+//    std::cout << "-------------------------------------  : "<<endl;
+//    std::cout << "taille de graphe->noeuds : "<<monGraphe->noeuds().size()<<std::endl;
+//    std::cout << "taille de aretes  : "<< monGraphe->aretes().size()<< std::endl;
+
+    std::vector<Noeud*> lieux, tmp,tmp2;
+    //ok fait lors de la lecture du gpx
+    //debut recuperer les sommets et les ajouter dans le vecteur de noeuds temporaire non trié avec doublons
+    for (auto t : g.tracks())
+    {
+        for(auto u : t.segments())
+        {
+            for(auto x : u.points())
+            {
+                tmp.push_back(new Lieu(0,x.lattitude(),x.longitude(),x.altitude()));
+            }
+        }
+    }
+
+
+//    for(unsigned int i=0;i<tmp.size();i++){
+//        cout<<"["<<tmp[i]->get_lattitude()<<","<<tmp[i]->get_longitude()<<","<<tmp[i]->get_altitude()<<"]"<<endl;
+//    }
+
+    //trier les noeuds par ordre croissant
+
+    trier(tmp);
+//    cout<<"Apres avoir trie"<<endl;
 
     //suppression des doublons
     lieux.push_back(tmp[0]);
@@ -393,10 +390,10 @@ void Manipulateur::creerGraphe(const Gpx& g){
         }
 
     }
-    cout<<"Apres avoir enleve doublons"<<endl;
-    for(unsigned int i=0;i<lieux.size();i++){
-        cout<<"["<<lieux[i]->get_lattitude()<<","<<lieux[i]->get_longitude()<<","<<lieux[i]->get_altitude()<<"]"<<endl;
-    }
+//    cout<<"Apres avoir enleve doublons"<<endl;
+//    for(unsigned int i=0;i<lieux.size();i++){
+//        cout<<"["<<lieux[i]->get_lattitude()<<","<<lieux[i]->get_longitude()<<","<<lieux[i]->get_altitude()<<"]"<<endl;
+//    }
 
     //copier le vecteur lieux dans le vecteur de noeuds du graphe
     monGraphe->setNoeuds(lieux);
@@ -459,31 +456,23 @@ void Manipulateur::creerGraphe(const Gpx& g){
         while(!tmp.empty()){
             tmp.pop_back();
         }
-        tmp2.clear();
+        tmp.clear();
         while(!lieux.empty()){
             lieux.pop_back();
         }
         lieux.clear();
-    //    //fin recuperer les aretes
 
-    //    //libérer la mémoire
-    //    while(!tmp.empty()){
-    //        delete tmp.back();
-    //        tmp.pop_back();
-    //    }
 
-    //afficher adj
-    //afficheAdj();
+        //creer aretes
+        int nb = monGraphe->noeuds().size();
+        for(int i=1;i<=nb;i++){
+            for(int j=1;j<=nb;j++){
+                if (M_adj[i][j] == 1 && i!=j)
 
-    //    //creer aretes
-    int nb = monGraphe->noeuds().size();
-    for(int i=1;i<=nb;i++){
-        for(int j=1;j<=nb;j++){
-            if (M_adj[i][j] == 1 && i!=j)
-                monGraphe->addArete(new Arete(monGraphe->aretes().size()+1,monGraphe->getNoeud(i),monGraphe->getNoeud(j)));
+                    monGraphe->addArete(new Arete(monGraphe->aretes().size()+1,monGraphe->getNoeud(i-1),monGraphe->getNoeud(j-1)));
 
+            }
         }
-    }
 
 
 
@@ -494,7 +483,17 @@ void Manipulateur::creerGraphe(const Gpx& g){
 //    std::cout << "taille de lieux   : "<< lieux.size()<< std::endl;
 //    std::cout << "taille de tmp   : "<< tmp.size()<< std::endl;
 //    std::cout << "taille de tmp2   : "<< tmp2.size()<< std::endl;
+//    std::cout << "-------------------------------------  : "<<endl;
 
+//    k=0;
+//    for (auto t : monGraphe->noeuds())
+//    std::cout << k++ <<*t<<std::endl;
+
+//    for (auto t : monGraphe->aretes())
+//    std::cout <<*t<<std::endl;
+    //        std::cout << t->getNoeud1()->get_id() << " : " << t->getNoeud2()->get_id() <<std::endl;
+     //   std::cout << t->getNoeud1() << " : " << t->getNoeud2()<<std::endl;
+//afficheAdj();
 
 }
 
@@ -513,7 +512,7 @@ void Manipulateur::ajouterLieu(int i, double lattitude, double longitude, double
 }
 
 
-void Manipulateur::updateMadj(const int i, const int j){ M_adj[i][j] = 1; }
+void Manipulateur::updateMadj(const int i, const int j){ M_adj[i][j] = 1; M_adj[0][1]++; }
 
 void Manipulateur::initMadj(){
     //recuperer le nombre de noeuds contenus dans le graphe
@@ -532,6 +531,7 @@ void Manipulateur::initMadj(){
         }
     }
     M_adj[0][0]=n;
+    M_adj[0][1]=0;
 }
 
 void Manipulateur::updateArete(){
@@ -572,9 +572,8 @@ void Manipulateur::testGeoJSON(){
 
     Gpx g = Manipulateur::lireGPX("C:/Users/oliv/Documents/L3_INFO/Projet_GA/test.gpx");
     Manipulateur m;
-    m.toGeoJSON(g);
     m.creerGraphe(g);
-
+    m.toGeoJSON();
 }
 
 
@@ -798,7 +797,7 @@ void Manipulateur::testAlgo(){
     delete(g);
     delete(h);
 
-    int *poids,**matrix; //*aps,*fs,n,m
+    int *poids,**matrix; // *aps, *fs,n,m
     n = 5;m = 7;
     matrix = new int*[n+1];
     matrix[0] = new int[2]; matrix[0][0] = n; matrix[0][1] = m;

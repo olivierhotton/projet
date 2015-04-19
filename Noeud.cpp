@@ -40,7 +40,11 @@
       n.print(ost);
       return ost;
     }
-
+//    std::ostream& operator<<(std::ostream& ost, Noeud* n)
+//    {
+//      n->print(ost);
+//      return ost;
+//    }
 
 
 

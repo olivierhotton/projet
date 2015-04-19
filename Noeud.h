@@ -47,6 +47,7 @@ class Noeud{
 
     };
 
+//std::ostream& operator<<(std::ostream& , Noeud* );
 std::ostream& operator<<(std::ostream& , const Noeud& );
 std::istream& operator>>(std::istream& , Noeud& );
 
