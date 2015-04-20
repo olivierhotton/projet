@@ -1,5 +1,6 @@
 #include "Manipulateur.h"
 #include <vector>
+#include <math.h>
 using namespace gpx_ns;
 using namespace geojson_ns;
 using namespace algo_ns;
@@ -546,8 +547,12 @@ void Manipulateur::saisirArete(){
     std::cin >> succ;
 
     //push arete - les noeuds sont deja tries
-    monGraphe->addArete(new Arete(monGraphe->aretes().size()+1,monGraphe->getNoeud(pred-1),monGraphe->getNoeud(succ-1)));
-
+    int l = aps[pred];
+    while(fs[l]!=0){
+        if(fs[l]==succ)
+            monGraphe->addArete(new Arete(monGraphe->aretes().size()+1,monGraphe->getNoeud(pred-1),monGraphe->getNoeud(succ-1)));
+            break;
+    }
 
     //mettre a jour fs aps
     Algorithme algo;
@@ -665,6 +670,33 @@ void Manipulateur::updateArete(){
 
 }
 
+void Manipulateur::initPoids(){
+    int l,t,poid;
+    int n = aps[0];
+    for(int i=1;i<=n;i++){
+        l = aps[i];
+        while((t=fs[l])!=0){
+            poid = (monGraphe->getNoeud(i-1)->get_altitude()- monGraphe->getNoeud(t-1)->get_altitude());
+            poids[l] = poid;
+        }
+    }
+}
+
+void Manipulateur::initPoids2(){
+    int l,t,poid;
+    long c;
+    int n = aps[0];
+    for(int i=1;i<=n;i++){
+        l = aps[i];
+        while((t=fs[l])!=0){
+            c = (monGraphe->getNoeud(i-1)->get_lattitude()- monGraphe->getNoeud(t-1)->get_lattitude())*10000*(monGraphe->getNoeud(i-1)->get_lattitude()- monGraphe->getNoeud(t-1)->get_lattitude())*10000;
+            c += (monGraphe->getNoeud(i-1)->get_longitude()- monGraphe->getNoeud(t-1)->get_longitude())*10000*(monGraphe->getNoeud(i-1)->get_longitude()- monGraphe->getNoeud(t-1)->get_longitude())*10000;
+            poid = sqrt(c);
+            poids[l] = poid;
+        }
+    }
+}
+
 void Manipulateur::testGraphe()
 {
     //    Graphe gr = Graphe();
@@ -679,7 +711,7 @@ void Manipulateur::testGPX(){
 
 
 void Manipulateur::testAlgo(){
-    Gpx gpx =lireGPX("C:/gpx/test.gpx");
+    Gpx gpx =lireGPX("C:\gpx\test.gpx");
     creerGraphe(gpx);
     updateGeoJSON();
    // saisirLieu();
@@ -687,8 +719,10 @@ void Manipulateur::testAlgo(){
 
     //afficher_structure();
     Algorithme algo;
-    choisir_structure(2);
+    //choisir_structure(2);
     afficher_structure();
+    initPoids();
+    //initPoids2();
 //    int* t;
 //    algo.prufer(g,n,t);
 //    afficher_structure();
@@ -891,5 +925,219 @@ void Manipulateur::afficher_structure(){
     default:
         cout<<"ERREUR!"<<endl;
         break;
+    }
+}
+
+void Manipulateur::run(){
+    Gpx gpx =lireGPX("C:/gpx/test.gpx");
+    creerGraphe(gpx);
+    updateGeoJSON();
+   // saisirLieu();
+  //  saisirArete();
+
+    //afficher_structure();
+    Algorithme algo;
+    //choisir_structure(2);
+    afficher_structure();
+    initPoids();
+    //initPoids2();
+    int choix=0,choix2;
+    while(choix!=0){
+        cout<<"Votre choix : "<<endl<<"[0] Terminer"<<endl<<"[1] Afficher la structure du graphe";
+        cout<<endl<<"[2] Changer la structure du graphe"<<endl;
+        cout<<"[3] Ajouter un sommet"<<endl<<"[4] Ajouter un arc"<<endl;
+        cout<<"[5] Initialiser les poids"<<endl;
+        cout<<"[6] Algorithme"<<endl;
+        cin>>choix;
+        if(choix!=6){
+            switch(choix){
+                case 0:
+                    return;
+                case 1:
+                    afficher_structure();
+                    break;
+                case 2:
+                    cout<<"Structure : [1] fs aps poids  [2] Matrice d'adjacent  [3] Liste d'aretes  [4] Liste principale et liste secondaire"<<endl;
+                    cout<<"Votre choix : ";
+                    cin>>choix2;
+                    choisir_structure(choix2);
+                    break;
+                case 3:
+                    saisirLieu();
+                    break;
+                case 4:
+                    saisirArete();
+                    break;
+                case 5:
+                    cout<<"Structure : [1] Pente  [2] Distance"<<endl;
+                    cout<<"Votre choix : ";
+                    cin>>choix2;
+                    choisir_structure(1);
+                    if(choix2 == 1)
+                        initPoids();
+                    else
+                        if(choix2 == 2)
+                            initPoids2();
+                        else
+                            cout<<"1 ou 2"<<endl;
+                    break;
+                default:
+                    cout<<"Entre 1 et 6"<<endl;
+                    break;
+            }
+        }
+        else{
+            cout<<"Votre choix : "<<endl<<"[0] Dijkstra"<<endl<<"[1] Belleman";
+            cout<<endl<<"[2] Dantzig"<<endl;
+            cout<<"[3] Kruskal"<<endl<<"[4] Prim"<<endl;
+            cout<<"[5] Prufer"<<endl;
+            cout<<"[6] Rang"<<endl;
+            cout<<"[7] Distances"<<endl;
+            cout<<"Votre choix : ";
+            cin>>choix2;
+            if(choix2<0||choix2>7){
+                cout<<"Entre 0 et 7"<<endl;
+            }
+            else{
+                if(choix2 == 0){
+                    choisir_structure(1);
+                    int *pred,*d,s;
+                    cout<<"Sommet initial : ";
+                    cin>>s;
+                    algo.dijkstra(fs,aps,poids,s,pred,d);
+                    int n = pred[0];
+                    cou<<"Pred : ["<<pred[0];
+                    for(int i=1;i<=n;i++){
+                        cout<<","<<pred[i];
+                    }
+                    cout<<"]"<<endl;
+                    cou<<"d : ["<<d[0];
+                    for(int i=1;i<=n;i++){
+                        cout<<","<<d[i];
+                    }
+                    cout<<"]"<<endl;
+                    algo.del_fs_aps(pred,d);
+                }
+                else{
+                    if(choix2 == 1){
+                        choisir_structure(1);
+                        int *pred,*d,s;
+                        cout<<"Sommet initial : ";
+                        cin>>s;
+                        algo.bellman(fs,aps,poids,s,pred,d);
+                        int n = pred[0];
+                        cou<<"Pred : ["<<pred[0];
+                        for(int i=1;i<=n;i++){
+                            cout<<","<<pred[i];
+                        }
+                        cout<<"]"<<endl;
+                        cou<<"d : ["<<d[0];
+                        for(int i=1;i<=n;i++){
+                            cout<<","<<d[i];
+                        }
+                        cout<<"]"<<endl;
+                        algo.del_fs_aps(pred,d);
+                    }
+                    else{
+                        if(choix2 == 2){
+                            choisir_structure(2);
+                            int **matrice_res;
+                            algo.dantzig(M_adj,matrice_res);
+                            cout<<"Matrice des couts"<<endl;
+                            algo.affiche_matrice(M_adj);
+                            cout<<"Matrice des couts des plus cours chemins"<<endl;
+                            algo.affiche_matrice(matrice_res);
+                            algo.del_matrice(matrice_res);
+                        }
+                        else{
+                            if(choix2 == 3){
+                                choisir_structure(3);
+                                if(!g){
+                                    cout<<"Impossible! Kruskal ne marche pas avec un graphe oriente"<<endl;
+                                }
+                                else{
+                                    arete *t;
+                                    algo.kruskal(g,n,t);
+                                    cout<<"Les aretes : "<<endl;
+                                    algo.affiche_aretes(g,n,m);
+                                    cout<<"L'ARM : "<<endl;
+                                    algo.affiche_aretes(t,n,n-1);
+                                    algo.del_aretes(t);
+                                }
+
+                            }
+                            else{
+                                if(choix2 == 4){
+                                    choisir_structure(3);
+                                    if(!g){
+                                        cout<<"Impossible! Prim ne marche pas avec un graphe oriente"<<endl;
+                                    }
+                                    else{
+                                        arete *t;
+                                        int s;
+                                        cout<<"Sommet initial : ";
+                                        cin>>s;
+                                        algo.prim(g,n,m,s,t);
+                                        cout<<"Les aretes : "<<endl;
+                                        algo.affiche_aretes(g,n,m);
+                                        cout<<"L'ARM : "<<endl;
+                                        algo.affiche_aretes(t,n,n-1);
+                                        algo.del_aretes(t);
+                                    }
+                                }
+                                else{
+                                    if(choix2 == 5){
+                                        choisir_structure(3);
+                                        if(!g){
+                                            cout<<"Impossible! Prufer ne marche pas avec un graphe oriente"<<endl;
+                                        }
+                                        else{
+                                            int *t;
+                                            algo.prufer(g,n,t);
+                                            cout<<"Les aretes : "<<endl;
+                                            algo.affiche_aretes(g,n,m);
+                                            cout<<"Le codage ["<<t[0];
+                                            for(int i=1;i<(n-1);i++){
+                                                cout<<","<<t[i];
+                                            }
+                                            cout<<"]"<<endl;
+                                            delete [] t;
+                                        }
+                                    }
+                                    else{
+                                        if(choix2 == 6){
+                                            if(det_structure()!=1) choisir_structure(1);
+                                            int *rang;
+                                            int n = aps[0];
+                                            algo.det_rang(fs,aps,rang);
+                                            cout<<"Rang ["<<rang[0];
+                                            for(int i=1;i<=n;i++){
+                                                cout<<","<<rang[i];
+                                            }
+                                            cout<<"]"<<endl;
+                                            delete [] rang;
+                                        }
+                                        else{
+                                            if(det_structure()!=1) choisir_structure(1);
+                                            int s,*marque;
+                                            cout<<"Sommet initial : ";
+                                            cin>>s;
+                                            algo.det_dist(fs,aps,s,marque);
+                                            cout<<"Distance ["<<marque[0];
+                                            for(int i=1;i<=n;i++){
+                                                cout<<","<<marque[i];
+                                            }
+                                            cout<<"]"<<endl;
+                                            delete [] marque;
+
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

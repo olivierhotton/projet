@@ -10,10 +10,10 @@ using namespace std;
 int main()
 {
 
-    Gpx g = Manipulateur::lireGPX("c:/gpx/test.gpx");
-    std::cout << g;
+    //Gpx g = Manipulateur::lireGPX("C:\gpx\test.gpx");
+    //std::cout << g;
     Manipulateur m;
-    m.testAlgo();
+    m.run();
     return 0;
 }
 

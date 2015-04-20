@@ -67,8 +67,8 @@ namespace manip_ns{
             void updateArete(); // maj vecteur arete a partir de m_adj
 
             // static std::vector<Arete>& aretes(const Position& p1, const Position& p2);//a faire pour mise a jour du graphe
-
-
+            void initPoids();
+            void initPoids2();
             /* Fichiers */
 
             /* Affichage */
@@ -83,6 +83,7 @@ namespace manip_ns{
              void saisirArete();
              void modifierLieu();
             void trier(std::vector<Noeud *> &tmp);
+            void run();
 
      private :
 	
