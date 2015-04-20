@@ -75,12 +75,13 @@ namespace manip_ns{
             void supprime_sommet(int *fs,int *aps,int index,vector<algo_ns::arete> &g);
             static void testGraphe();
             static void testGPX();
-            static void testGeoJSON();
-            static void testAlgo();
+             void testAlgo();
            //static std::vector<Arete *> creerArete(const std::vector<Arete>& va);
 
             /* Manipulation de données */
-
+             void saisirLieu();
+             void saisirArete();
+             void modifierLieu();
             void trier(std::vector<Noeud *> &tmp);
 
      private :

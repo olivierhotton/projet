@@ -35,6 +35,10 @@ class Lieu : public Noeud  {
 
 
 
+     void set_lattitude(double lattitude) override;
+     void set_longitude(double longitude)  override;
+     void set_altitude(double altitude)  override;
+     void set_nom(const std::string& nom)  override;
 
      double get_lattitude() const override ;
      double get_longitude() const override ;

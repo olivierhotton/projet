@@ -191,18 +191,18 @@ int Manipulateur::indicePosition(int g, int d, Noeud *n)
     else
     {
         int m = (g+d)/2;
-        if (n->get_lattitude() < monGraphe->getNoeud(m)->get_lattitude())
+        if (n->get_lattitude() <= monGraphe->getNoeud(m)->get_lattitude())
 
             return indicePosition(g,m,n);
         else
-            if(n->get_lattitude() == monGraphe->getNoeud(m)->get_lattitude())
-            {  if(n->get_longitude() < monGraphe->getNoeud(m)->get_longitude())
-                    return indicePosition(g,m,n);
-                else
-                    return indicePosition(m+1,d,n);
-            }
-            else
-                return indicePosition(m+1,d,n);
+            //            if(n->get_lattitude() == monGraphe->getNoeud(m)->get_lattitude())
+            //            {  if(n->get_longitude() < monGraphe->getNoeud(m)->get_longitude())
+            //                    return indicePosition(g,m,n);
+            //                else
+            //                    return indicePosition(m+1,d,n);
+            //            }
+            //            else
+            return indicePosition(m+1,d,n);
     }
 }
 
@@ -210,9 +210,9 @@ int Manipulateur::indicePosition(int g, int d, Noeud *n)
 
 void Manipulateur::updateGeoJSON(){
 
-        std::cout << "-------------------------------------  : "<<endl;
-        std::cout << "taille de graphe->noeuds : "<<monGraphe->noeuds().size()<<std::endl;
-        std::cout << "taille de aretes  : "<< monGraphe->aretes().size()<< std::endl;
+    std::cout << "-------------------------------------  : "<<endl;
+    std::cout << "taille de graphe->noeuds : "<<monGraphe->noeuds().size()<<std::endl;
+    std::cout << "taille de aretes  : "<< monGraphe->aretes().size()<< std::endl;
 
 
     MultiLineString mls = MultiLineString();
@@ -231,7 +231,7 @@ void Manipulateur::updateGeoJSON(){
         LineString l= LineString();
 
         i=u->getNoeud1()->get_id();
-         j=u->getNoeud2()->get_id();
+        j=u->getNoeud2()->get_id();
 
         //ne pas tracer les doubles orientations i->j et j->i
         if(i <= j)
@@ -242,7 +242,7 @@ void Manipulateur::updateGeoJSON(){
             //std::cout <<i<< " vers ";
             p=Position(u->getNoeud2()->get_lattitude(),u->getNoeud2()->get_longitude(),u->getNoeud2()->get_altitude());
             l.addPosition(p);
-           // std::cout << j << std::endl;
+            // std::cout << j << std::endl;
 
             mls.addLineString(l);
         }
@@ -250,7 +250,7 @@ void Manipulateur::updateGeoJSON(){
 
     }
     std::cout << std::endl;
-//    afficheAdj();
+    //    afficheAdj();
     /* ajouter tous les points sur un meme segment */
     //for(auto u : monGraphe->noeuds()) //pour chaque arete
     //{
@@ -481,9 +481,9 @@ void Manipulateur::creerGraphe(const Gpx& g){
         }
     }
 
-   Algorithme algo;
-   algo.matrix2all(M_adj,fs,aps,poids);
-   algo.del_matrice(M_adj);
+    Algorithme algo;
+    algo.matrix2all(M_adj,fs,aps,poids);
+    algo.del_matrice(M_adj);
 
 
 
@@ -504,8 +504,8 @@ void Manipulateur::creerGraphe(const Gpx& g){
     //    std::cout <<*t<<std::endl;
     //        std::cout << t->getNoeud1()->get_id() << " : " << t->getNoeud2()->get_id() <<std::endl;
     //   std::cout << t->getNoeud1() << " : " << t->getNoeud2()<<std::endl;
-   // afficheAdj();
-   afficher_structure();
+    // afficheAdj();
+    afficher_structure();
 
 }
 
@@ -523,6 +523,102 @@ void Manipulateur::ajouterLieu(int i, double lattitude, double longitude, double
 
 }
 
+void Manipulateur::saisirArete(){
+
+    int pred,succ;
+    std::cout<<"---------------------------------------------------"<<std::endl;
+    std::cout<<"Ajout d\'une arete \n";
+    std::cout<<"---------------------------------------------------"<<std::endl;
+
+
+    //changer de structure pour pred et successeurs = choix 1
+    if (det_structure() != 1) choisir_structure(1);
+
+    //choisir le predecesseur
+    std::cout<<std::endl << "Saisir le predecesseur";
+    std::cout << "[ 1" <<" - "<< monGraphe->noeuds().size() << "] : " << std::endl;
+    std::cin >> pred;
+
+
+    //choisir le sucesseur
+    std::cout<<std::endl << "Saisir le sucesseur";
+    std::cout << "[ 1" <<" - "<< monGraphe->noeuds().size() << "] : "<<std::endl;
+    std::cin >> succ;
+
+    //push arete - les noeuds sont deja tries
+    monGraphe->addArete(new Arete(monGraphe->aretes().size()+1,monGraphe->getNoeud(pred-1),monGraphe->getNoeud(succ-1)));
+
+
+    //mettre a jour fs aps
+    Algorithme algo;
+    algo.all2matrix(fs,aps,poids,M_adj);
+    updateMadj(pred,succ);
+    algo.del_fs_aps_poids(fs,aps,poids);
+    algo.matrix2all(M_adj,fs,aps,poids);
+    algo.del_matrice(M_adj);
+}
+
+void Manipulateur::saisirLieu(){
+
+    double lattitude,longitude,altitude;
+    int num=monGraphe->noeuds().size()+1;
+    std::string nom;
+    std::cout<<"---------------------------------------------------"<<std::endl;
+    std::cout<<"Ajout d\'un sommet\n";
+    std::cout<<"---------------------------------------------------"<<std::endl;
+
+    std::cout<<std::endl << "Saisir la lattitude : "<<std::endl;
+    std::cin >> lattitude;
+
+    std::cout<<std::endl << "Saisir la longitude : "<<std::endl;
+    std::cin >> lattitude;
+
+    std::cout<<std::endl << "Saisir l\'altitude : "<<std::endl;
+    std::cin >> altitude;
+
+
+    std::cout<<std::endl << "Saisir le nom : "<<std::endl;
+    std::cin >> nom;
+
+    //ajouter le sommet dans le vecteur de noeuds
+    monGraphe->addNoeud(new Lieu(num,lattitude,longitude,altitude,nom));
+    //incrementer le nombre de sommets de la structure
+//    int* fs_tmp= fs;int* aps_tmp=aps;int* poids_tmp=poids;
+    int m=fs[0];
+    int n=aps[0];
+    int* fs_tmp = new int[m+1];
+    int* aps_tmp = new int[n+1];
+    int* poids_tmp = new int[m+1];
+
+    for(int i=1;i<=m;i++) fs_tmp[i]=fs[i];
+    for(int i=1;i<=n;i++) aps_tmp[i]=aps[i];
+    for(int i=1;i<=m;i++) poids_tmp[i]=poids[i];
+
+
+    n++;
+
+    m++;
+    Algorithme algo;
+    algo.del_fs_aps_poids(fs,aps,poids);
+    fs=new int[m+1];
+    aps=new int[n+1];
+    poids=new int[m+1];
+    fs[0]=m;
+    aps[0]=n;
+    for(int i=1;i<m;i++)
+    {
+        std::cout << fs_tmp[i] << " : " << poids_tmp[i]<<std::endl;
+        fs[i]=fs_tmp[i];
+        poids[i]=poids_tmp[i];
+    }
+    fs[m]=0;
+    poids[0]=m;
+    poids[m]=INT_MAX;
+    for(int j=1;j<n;j++){aps[j]=aps_tmp[j];}
+    aps[n]=m;
+    algo.del_fs_aps_poids(fs_tmp,aps_tmp,poids_tmp);
+
+}
 
 void Manipulateur::updateMadj(const int i, const int j){ M_adj[i][j] = 1; M_adj[0][1]++; }
 
@@ -580,341 +676,27 @@ void Manipulateur::testGPX(){
 
 
 
-void Manipulateur::testGeoJSON(){
-
-    Gpx g = Manipulateur::lireGPX("c:/gpx/test.gpx");
-    Manipulateur m;
-    m.creerGraphe(g);
-    m.updateGeoJSON();
-}
 
 
 void Manipulateur::testAlgo(){
-    /*
-    int *fs,*aps,**cout1,s,*pred,*d;
-    int n = 7;
-    int m = 12;
-    fs = new int[n+m+1];fs[0]=n+m;
-    aps = new int[n+1];aps[0]=n;
-    cout1 = new int*[n+1];
-    for(int i=0;i<=n;i++){
-        cout1[i] = new int[n+1];
-    }
-    fs[1] = 2;
-    fs[2] = 5;
-    fs[3] = 0; //1
-    fs[4] = 5;
-    fs[5] = 6;
-    fs[6] = 0; //2
-    fs[7] = 1;
-    fs[8] = 4;
-    fs[9] = 0; //3
-    fs[10] = 7;
-    fs[11] = 0; //4
-    fs[12] = 3;
-    fs[13] = 4;
-    fs[14] = 7;
-    fs[15] = 0; //5
-    fs[16] = 5;
-    fs[17] = 0; //6
-    fs[18] = 6;
-    fs[19] = 0; //7
+    Gpx gpx =lireGPX("C:/gpx/test.gpx");
+    creerGraphe(gpx);
+    updateGeoJSON();
+   // saisirLieu();
+  //  saisirArete();
 
-    aps[1] = 1;
-    aps[2] = 4;
-    aps[3] = 7;
-    aps[4] = 10;
-    aps[5] = 12;
-    aps[6] = 16;
-    aps[7] = 18;
-
-    for(int i=1;i<=n;i++){
-        for(int j=1;j<=n;j++){
-            cout1[i][j] = INT_MAX;
-        }
-    }
-
-    cout1[1][2] = 1;
-    cout1[1][5] = 3;
-    cout1[2][5] = 1;
-    cout1[2][6] = 4;
-    cout1[3][1] = 0;
-    cout1[3][4] = 2;
-    cout1[4][7] = 4;
-    cout1[5][3] = 1;
-    cout1[5][4] = 6;
-    cout1[5][7] = 0;
-    cout1[6][5] = 1;
-    cout1[7][6] = 1;
-
-    s = 1;
-
+    //afficher_structure();
     Algorithme algo;
+    choisir_structure(2);
+    afficher_structure();
+//    int* t;
+//    algo.prufer(g,n,t);
+//    afficher_structure();
+//    for (int i=0;i<n-1;i++)
+//    {
+//        std::cout << t[i] << ",";
+//    }
 
-
-    vector<arete> va;
-    int index = 5;
-    algo.supprime_sommet(fs,aps,index,va);
-    cout<<"****Test suppression d'un sommet****"<<endl;
-    for(int i=0;i<va.size();i++){
-        cout<<va[i].s<<" -> "<<va[i].t<<endl;
-    }
-    cout<<endl;
-
-    algo.dijkstra(fs,aps,cout1,s,pred,d);
-    cout<<"****Test Djikstra****"<<endl;
-    cout<<"pred : ["<<pred[1];
-    for(int i=2;i<=n;i++){
-        cout<<","<<pred[i];
-    }
-    cout<<"]"<<endl;
-
-    cout<<"d : ["<<d[1];
-    for(int i=2;i<=n;i++){
-        cout<<","<<d[i];
-    }
-    cout<<"]"<<endl;
-
-
-    delete(fs);
-    delete(aps);
-    for(int i=0;i<=n;i++){
-        delete(cout1[i]);
-    }
-    delete(cout1);
-    delete(pred);
-    delete(d);
-
-    n=8;
-    m=13;
-    arete *g,*t,a;
-    g = new arete[m];
-    //1
-    a.s = 1;
-    a.t = 2;
-    a.cout = 1;
-    g[0] = a;
-    //2
-    a.s = 1;
-    a.t = 3;
-    a.cout = 2;
-    g[1] = a;
-    //3
-    a.s = 1;
-    a.t = 4;
-    a.cout = 3;
-    g[2] = a;
-    //4
-    a.s = 2;
-    a.t = 3;
-    a.cout = 1;
-    g[3] = a;
-    //5
-    a.s = 2;
-    a.t = 5;
-    a.cout = 2;
-    g[4] = a;
-    //6
-    a.s = 2;
-    a.t = 6;
-    a.cout = 3;
-    g[5] = a;
-    //7
-    a.s = 2;
-    a.t = 7;
-    a.cout = 3;
-    g[6] = a;
-    //8
-    a.s = 3;
-    a.t = 4;
-    a.cout = 1;
-    g[7] = a;
-    //9
-    a.s = 3;
-    a.t = 7;
-    a.cout = 4;
-    g[8] = a;
-    //10
-    a.s = 4;
-    a.t = 6;
-    a.cout = 2;
-    g[9] = a;
-    //11
-    a.s = 4;
-    a.t = 7;
-    a.cout = 2;
-    g[10] = a;
-    //12
-    a.s = 4;
-    a.t = 8;
-    a.cout = 2;
-    g[11] = a;
-    //13
-    a.s = 5;
-    a.t = 6;
-    a.cout = 2;
-    g[12] = a;
-
-    algo.trierAretes(g,m);
-    algo.kruskal(g,n,m,t);
-    cout<<"****Test Kruskal****"<<endl;
-    for(int i=0;i<(n-1);i++){
-        cout<<"["<<t[i].s<<","<<t[i].t<<","<<t[i].cout<<"]"<<endl;
-    }
-
-    delete(g);
-    delete(t);
-
-    g = new arete[8];
-    //1
-    a.s = 1;
-    a.t = 6;
-    g[0] = a;
-    //2
-    a.s = 1;
-    a.t = 7;
-    g[1] = a;
-    //3
-    a.s = 1;
-    a.t = 2;
-    g[2] = a;
-    //4
-    a.s = 2;
-    a.t = 3;
-    g[3] = a;
-    //5
-    a.s = 2;
-    a.t = 4;
-    g[4] = a;
-    //6
-    a.s = 2;
-    a.t = 5;
-    g[5] = a;
-    //7
-    a.s = 5;
-    a.t = 8;
-    g[6] = a;
-    //8
-    a.s = 5;
-    a.t = 9;
-    g[7] = a;
-    int *h;
-    algo.prufer(g,9,h);
-    cout<<"****Test Prufer****"<<endl;
-    cout<<"h: ["<<h[0];
-    for(int i=1;i<7;i++){
-        cout<<","<<h[i];
-    }
-    cout<<"]"<<endl;
-    delete(g);
-    delete(h);
-
-    int *poids,**matrix; // *aps, *fs,n,m
-    n = 5;m = 7;
-    matrix = new int*[n+1];
-    matrix[0] = new int[2]; matrix[0][0] = n; matrix[0][1] = m;
-    for(int i=1;i<=n;i++){
-        matrix[i] = new int[n+1];
-        for(int j=1;j<=n;j++) matrix[i][j] = INT_MAX;
-    }
-    matrix[1][2] = 1;
-    matrix[1][5] = 3;
-    matrix[2][5] = 1;
-    matrix[3][1] = 0;
-    matrix[3][4] = 2;
-    matrix[5][3] = 1;
-    matrix[5][4] = 6;
-    algo.matrix2all(matrix,fs,aps,poids);
-    cout<<"****Test matrix2all****"<<endl;
-    cout<<"aps: ["<<aps[0];
-    for(int i=1;i<=n;i++){
-        cout<<","<<aps[i];
-    }
-    cout<<"]"<<endl;
-    cout<<"fs: ["<<fs[0];
-    for(int i=1;i<=(n+m);i++){
-        cout<<","<<fs[i];
-    }
-    cout<<"]"<<endl;
-    cout<<"poids: ["<<poids[0];
-    for(int i=1;i<=(n+m);i++){
-        cout<<","<<poids[i];
-    }
-    cout<<"]"<<endl;
-
-    algo.all2matrix(fs,aps,poids,matrix);
-    cout<<"****Test all2matrix****"<<endl;
-    cout<<"Matrix:"<<endl;
-    for(int i=1;i<=n;i++){
-        cout<<"| ";
-        for(int j=1;j<=n;j++){
-            switch(matrix[i][j]){
-            case INT_MAX:
-                cout<<"m ";
-                break;
-            default:
-                cout<<matrix[i][j]<<" ";
-                break;
-            }
-        }
-        cout<<"|"<<endl;
-    }
-
-    for(int i=0;i<=n;i++){
-        delete(matrix[i]);
-    }
-    delete(matrix);
-    //delete(fs);
-    //delete(aps);
-    //delete(poids);
-
-    n=4;m=4;
-    g = new arete[4];
-    //1
-    a.s = 1;
-    a.t = 2;
-    a.cout = 1;
-    g[0] = a;
-    //2
-    a.s = 1;
-    a.t = 3;
-    a.cout = 2;
-    g[1] = a;
-    //3
-    a.s = 1;
-    a.t = 4;
-    a.cout = 3;
-    g[2] = a;
-    //4
-    a.s = 2;
-    a.t = 3;
-    a.cout = 1;
-    g[3] = a;
-
-    algo.aretes2matrix(g,matrix,n,m);
-    cout<<"****Test aretes2matrix****"<<endl;
-    cout<<"Matrix:"<<endl;
-    for(int i=1;i<=n;i++){
-        cout<<"| ";
-        for(int j=1;j<=n;j++){
-            switch(matrix[i][j]){
-            case INT_MAX:
-                cout<<"m ";
-                break;
-            default:
-                cout<<matrix[i][j]<<" ";
-                break;
-            }
-        }
-        cout<<"|"<<endl;
-    }
-
-    algo.matrix2aretes(matrix,g,n,m);
-    cout<<"****Test matrix2arete****"<<endl;
-    for(int i=0;i<m;i++){
-        cout<<"["<<g[i].s<<","<<g[i].t<<","<<g[i].cout<<"]"<<endl;
-    }
-    delete(g);*/
 }
 
 void Manipulateur::supprime_sommet(int *fs,int *aps,int index,vector<algo_ns::arete> &g){
