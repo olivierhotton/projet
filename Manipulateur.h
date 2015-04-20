@@ -94,7 +94,7 @@ namespace manip_ns{
             int* fs;
             int* aps;
 
-
+            int structure;
             arete* g;
             int n; // nombre de sommets
             int m; // nombre d'aretes

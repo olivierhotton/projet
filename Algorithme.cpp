@@ -831,56 +831,56 @@ void Algorithme::test(){
 
 
 
-//}
+}
 
-//void Algorithme::dijkstra(int* fs, int* aps,int *poids,int s,int* &pred,int* &d){
-//    int **cout;
-//    all2matrix(fs,aps,poids,cout);
-//    int n = aps[0];int x,j,m,k;
-//    m = n-1;
-//    d = new int[n+1]; d[0] = n;
-//    pred = new int[n+1]; pred[0] = n;
-//    bool *b = new bool[n+1];
-//    b[0] = false;
+void Algorithme::dijkstra(int* fs, int* aps,int *poids,int s,int* &pred,int* &d){
+    int **cout;
+    all2matrix(fs,aps,poids,cout);
+    int n = aps[0];int x,j,m,k;
+    m = n-1;
+    d = new int[n+1]; d[0] = n;
+    pred = new int[n+1]; pred[0] = n;
+    bool *b = new bool[n+1];
+    b[0] = false;
 
-//    for(int i=1;i<=n;i++){
-//        d[i] = cout[s][i];
-//        pred[i] = s;
-//        b[i] = true;
+    for(int i=1;i<=n;i++){
+        d[i] = cout[s][i];
+        pred[i] = s;
+        b[i] = true;
 
-//    }
-//    pred[s] = 0;
-//    d[s] = 0;
-//    b[s] = false;
+    }
+    pred[s] = 0;
+    d[s] = 0;
+    b[s] = false;
 
-//    while(m>0){
-//        x = INT_MAX;
-//        for(int i=1;i<=n;i++){
-//            if(b[i]){
-//                if(d[i]<x){
-//                    x = d[i];
-//                    j = i;
-//                }
-//            }
-//        }
-//        if(x == INT_MAX)
-//            break;
-//        b[j] = false;
-//        m--;
-//        k = aps[j];
-//        while(fs[k]>0){
-//            if(b[fs[k]]){
-//                int v = d[j] + cout[j][fs[k]];
-//                if(v<d[fs[k]]){
-//                    d[fs[k]] = v;
-//                    pred[fs[k]] = j;
-//                }
-//            }
-//            k++;
-//        }
-//    }
-//    del_matrice(cout);
-//    delete [] b;
+    while(m>0){
+        x = INT_MAX;
+        for(int i=1;i<=n;i++){
+            if(b[i]){
+                if(d[i]<x){
+                    x = d[i];
+                    j = i;
+                }
+            }
+        }
+        if(x == INT_MAX)
+            break;
+        b[j] = false;
+        m--;
+        k = aps[j];
+        while(fs[k]>0){
+            if(b[fs[k]]){
+                int v = d[j] + cout[j][fs[k]];
+                if(v<d[fs[k]]){
+                    d[fs[k]] = v;
+                    pred[fs[k]] = j;
+                }
+            }
+            k++;
+        }
+    }
+    del_matrice(cout);
+    delete [] b;
 }
 
 void Algorithme::det_fpapp(int* fs, int* aps,int *&fp,int *&app){
@@ -1199,6 +1199,7 @@ void Algorithme::all2matrix(int *fs,int *aps,int *poids,int **&a){
         for(int l=aps[i];fs[l]>0;l++){
             a[i][fs[l]] = poids[l];
         }
+    a[i][i]=0;
     }
 }
 

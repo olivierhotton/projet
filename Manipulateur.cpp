@@ -506,6 +506,7 @@ void Manipulateur::creerGraphe(const Gpx& g){
     //        std::cout << t->getNoeud1()->get_id() << " : " << t->getNoeud2()->get_id() <<std::endl;
     //   std::cout << t->getNoeud1() << " : " << t->getNoeud2()<<std::endl;
     // afficheAdj();
+    structure=1;
     afficher_structure();
 
 }
@@ -676,8 +677,10 @@ void Manipulateur::initPoids(){
     for(int i=1;i<=n;i++){
         l = aps[i];
         while((t=fs[l])!=0){
+            cout <<std::endl << monGraphe->getNoeud(i-1)->get_altitude();
             poid = (monGraphe->getNoeud(i-1)->get_altitude()- monGraphe->getNoeud(t-1)->get_altitude());
             poids[l] = poid;
+            l++;
         }
     }
 }
@@ -693,6 +696,7 @@ void Manipulateur::initPoids2(){
             c += (monGraphe->getNoeud(i-1)->get_longitude()- monGraphe->getNoeud(t-1)->get_longitude())*10000*(monGraphe->getNoeud(i-1)->get_longitude()- monGraphe->getNoeud(t-1)->get_longitude())*10000;
             poid = sqrt(c);
             poids[l] = poid;
+            l++;
         }
     }
 }
@@ -766,17 +770,18 @@ void Manipulateur::supprime_sommet(int *fs,int *aps,int index,vector<algo_ns::ar
  * Controle
  * */
 int Manipulateur::det_structure(){
-    if(aps)
-        //les fs,aps,poids sont utilisé
-        return 1;
-    if(M_adj)
-        //la matrice d'ajacence est utilisée
-        return 2;
-    if(g)
-        //la liste des aretes est utilisée
-        return 3;
-    //la liste principale et la liste secondaire sont utilisées
-    return 4;
+//    if(aps)
+//        //les fs,aps,poids sont utilisé
+//        return 1;
+//    if(M_adj)
+//        //la matrice d'ajacence est utilisée
+//        return 2;
+//    if(g)
+//        //la liste des aretes est utilisée
+//        return 3;
+//    //la liste principale et la liste secondaire sont utilisées
+//    return 4;
+return structure;
 }
 
 void Manipulateur::choisir_structure(int i){
@@ -787,15 +792,18 @@ void Manipulateur::choisir_structure(int i){
         algo.aretes2matrix(g,a,n,m);
         switch(i){
         case 1:
+            structure=1;
             algo.matrix2all(a,fs,aps,poids);
             algo.del_matrice(a);
             delete [] g;
             break;
         case 2:
+            structure=2;
             M_adj = a;
             delete [] g;
             break;
         case 4:
+            structure=4;
             algo.matrix2all(a,fs_tmp,aps_tmp,poids_tmp);
             algo.del_matrice(a);
             algo.all2lists(fs_tmp,aps_tmp,poids_tmp,pri);
@@ -810,6 +818,7 @@ void Manipulateur::choisir_structure(int i){
     else{
         if(courant == 1){
             if(i == 4){
+                structure=4;
                 algo.all2lists(fs,aps,poids,pri);
                 algo.del_fs_aps_poids(fs,aps,poids);
             }
@@ -818,10 +827,22 @@ void Manipulateur::choisir_structure(int i){
                 algo.all2matrix(fs,aps,poids,a);
                 switch(i){
                 case 2:
+                    structure=2;
                     M_adj = a;
+                    //                    for(int i=0;i<=a[0][0];i++){
+                    //                        for(int j=0;j<=a[0][0];j++){
+
+
+                    //                        }
+
+                    //                    }
+                    //algo.all2matrix(fs,aps,poids,M_adj);
+                       // cout << "ok "<<M_adj[0][0]<<std::endl;
+
                     algo.del_fs_aps_poids(fs,aps,poids);
                     break;
                 case 3:
+                    structure=3;
                     if(algo.estSymetrique(a)){
                         algo.matrix2aretes(a,g,n,m);
                         algo.del_fs_aps_poids(fs,aps,poids);
@@ -840,6 +861,7 @@ void Manipulateur::choisir_structure(int i){
         else{
             if(courant == 2){
                 if(i == 4){
+                    structure=4;
                     int *fs_tmp,*aps_tmp,*poids_tmp;
                     algo.matrix2all(M_adj,fs_tmp,aps_tmp,poids_tmp);
                     algo.del_matrice(M_adj);
@@ -849,11 +871,13 @@ void Manipulateur::choisir_structure(int i){
                 else{
                     switch(i){
                     case 1:
+                        structure=1;
                         algo.matrix2all(M_adj,fs,aps,poids);
                         algo.del_matrice(M_adj);
                         break;
                     case 3:
                         if(algo.estSymetrique(M_adj)){
+                            structure=3;
                             algo.matrix2aretes(M_adj,g,n,m);
                             algo.del_matrice(M_adj);
                         }
@@ -872,20 +896,24 @@ void Manipulateur::choisir_structure(int i){
                     algo.lists2all(pri,fs_tmp,aps_tmp,poids);
                     switch(i){
                     case 1:
+                        structure=1;
                         fs = fs_tmp;
                         aps = aps_tmp;
                         algo.del_lists(pri);
                         break;
                     case 2:
+                        structure=2;
                         algo.all2matrix(fs_tmp,aps_tmp,poids,M_adj);
                         algo.del_fs_aps_poids(fs_tmp,aps_tmp,poids);
                         algo.del_lists(pri);
                         break;
                     case 3:
+
                         algo.all2matrix(fs_tmp,aps_tmp,poids,a);
                         algo.del_fs_aps_poids(fs_tmp,aps_tmp,poids);
                         if(algo.estSymetrique(a)){
-                            algo.matrix2aretes(a,g,n,m);
+                        structure=3;
+                        algo.matrix2aretes(a,g,n,m);
                             algo.del_lists(pri);
                         }
                         else{
@@ -909,12 +937,16 @@ void Manipulateur::choisir_structure(int i){
 void Manipulateur::afficher_structure(){
     int courant = det_structure();
     Algorithme algo;
+    //cout << "\n courant:" <<courant << std::endl;
     switch(courant){
     case 1:
         algo.affiche_fs_aps_poids(fs,aps,poids);
         break;
     case 2:
+//        cout << M_adj[0][0];
         algo.affiche_matrice(M_adj);
+
+
         break;
     case 3:
         algo.affiche_aretes(g,n,m);
@@ -932,6 +964,7 @@ void Manipulateur::run(){
     Gpx gpx =lireGPX("C:/gpx/test.gpx");
     creerGraphe(gpx);
     updateGeoJSON();
+
    // saisirLieu();
   //  saisirArete();
 
@@ -939,9 +972,11 @@ void Manipulateur::run(){
     Algorithme algo;
     //choisir_structure(2);
     afficher_structure();
-    initPoids();
+        //cout << "\nok";
+//    initPoids();
+       // cout << "\nok";
     //initPoids2();
-    int choix=0,choix2;
+    int choix=1,choix2;
     while(choix!=0){
         cout<<"Votre choix : "<<endl<<"[0] Terminer"<<endl<<"[1] Afficher la structure du graphe";
         cout<<endl<<"[2] Changer la structure du graphe"<<endl;
@@ -1000,18 +1035,18 @@ void Manipulateur::run(){
             }
             else{
                 if(choix2 == 0){
-                    choisir_structure(1);
+                    if(det_structure()!=1) choisir_structure(1);
                     int *pred,*d,s;
                     cout<<"Sommet initial : ";
                     cin>>s;
                     algo.dijkstra(fs,aps,poids,s,pred,d);
                     int n = pred[0];
-                    cou<<"Pred : ["<<pred[0];
+                    cout<<"Pred : ["<<pred[0];
                     for(int i=1;i<=n;i++){
                         cout<<","<<pred[i];
                     }
                     cout<<"]"<<endl;
-                    cou<<"d : ["<<d[0];
+                    cout<<"d : ["<<d[0];
                     for(int i=1;i<=n;i++){
                         cout<<","<<d[i];
                     }
@@ -1020,18 +1055,18 @@ void Manipulateur::run(){
                 }
                 else{
                     if(choix2 == 1){
-                        choisir_structure(1);
+                        if(det_structure()!=1)choisir_structure(1);
                         int *pred,*d,s;
                         cout<<"Sommet initial : ";
                         cin>>s;
                         algo.bellman(fs,aps,poids,s,pred,d);
                         int n = pred[0];
-                        cou<<"Pred : ["<<pred[0];
+                        cout<<"Pred : ["<<pred[0];
                         for(int i=1;i<=n;i++){
                             cout<<","<<pred[i];
                         }
                         cout<<"]"<<endl;
-                        cou<<"d : ["<<d[0];
+                        cout<<"d : ["<<d[0];
                         for(int i=1;i<=n;i++){
                             cout<<","<<d[i];
                         }
@@ -1040,7 +1075,7 @@ void Manipulateur::run(){
                     }
                     else{
                         if(choix2 == 2){
-                            choisir_structure(2);
+                            if(det_structure()!=2)choisir_structure(2);
                             int **matrice_res;
                             algo.dantzig(M_adj,matrice_res);
                             cout<<"Matrice des couts"<<endl;
@@ -1051,7 +1086,7 @@ void Manipulateur::run(){
                         }
                         else{
                             if(choix2 == 3){
-                                choisir_structure(3);
+                                if(det_structure()!=3)choisir_structure(3);
                                 if(!g){
                                     cout<<"Impossible! Kruskal ne marche pas avec un graphe oriente"<<endl;
                                 }
@@ -1068,7 +1103,7 @@ void Manipulateur::run(){
                             }
                             else{
                                 if(choix2 == 4){
-                                    choisir_structure(3);
+                                    if(det_structure()!=3)choisir_structure(3);
                                     if(!g){
                                         cout<<"Impossible! Prim ne marche pas avec un graphe oriente"<<endl;
                                     }
@@ -1087,7 +1122,7 @@ void Manipulateur::run(){
                                 }
                                 else{
                                     if(choix2 == 5){
-                                        choisir_structure(3);
+                                        if(det_structure()!=3)choisir_structure(3);
                                         if(!g){
                                             cout<<"Impossible! Prufer ne marche pas avec un graphe oriente"<<endl;
                                         }
@@ -1097,7 +1132,7 @@ void Manipulateur::run(){
                                             cout<<"Les aretes : "<<endl;
                                             algo.affiche_aretes(g,n,m);
                                             cout<<"Le codage ["<<t[0];
-                                            for(int i=1;i<(n-1);i++){
+                                            for(int i=1;i<(n-2);i++){
                                                 cout<<","<<t[i];
                                             }
                                             cout<<"]"<<endl;
