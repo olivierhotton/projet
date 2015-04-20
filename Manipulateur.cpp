@@ -552,7 +552,7 @@ void Manipulateur::saisirArete(){
     while(fs[l]!=0){
         if(fs[l]==succ)
             monGraphe->addArete(new Arete(monGraphe->aretes().size()+1,monGraphe->getNoeud(pred-1),monGraphe->getNoeud(succ-1)));
-            break;
+        break;
     }
 
     //mettre a jour fs aps
@@ -589,7 +589,7 @@ void Manipulateur::saisirLieu(){
     //ajouter le sommet dans le vecteur de noeuds
     monGraphe->addNoeud(new Lieu(num,lattitude,longitude,altitude,nom));
     //incrementer le nombre de sommets de la structure
-//    int* fs_tmp= fs;int* aps_tmp=aps;int* poids_tmp=poids;
+    //    int* fs_tmp= fs;int* aps_tmp=aps;int* poids_tmp=poids;
     int m=fs[0];
     int n=aps[0];
     int* fs_tmp = new int[m+1];
@@ -718,8 +718,8 @@ void Manipulateur::testAlgo(){
     Gpx gpx =lireGPX("C:\gpx\test.gpx");
     creerGraphe(gpx);
     updateGeoJSON();
-   // saisirLieu();
-  //  saisirArete();
+    // saisirLieu();
+    //  saisirArete();
 
     //afficher_structure();
     Algorithme algo;
@@ -727,13 +727,13 @@ void Manipulateur::testAlgo(){
     afficher_structure();
     initPoids();
     //initPoids2();
-//    int* t;
-//    algo.prufer(g,n,t);
-//    afficher_structure();
-//    for (int i=0;i<n-1;i++)
-//    {
-//        std::cout << t[i] << ",";
-//    }
+    //    int* t;
+    //    algo.prufer(g,n,t);
+    //    afficher_structure();
+    //    for (int i=0;i<n-1;i++)
+    //    {
+    //        std::cout << t[i] << ",";
+    //    }
 
 }
 
@@ -770,18 +770,18 @@ void Manipulateur::supprime_sommet(int *fs,int *aps,int index,vector<algo_ns::ar
  * Controle
  * */
 int Manipulateur::det_structure(){
-//    if(aps)
-//        //les fs,aps,poids sont utilisé
-//        return 1;
-//    if(M_adj)
-//        //la matrice d'ajacence est utilisée
-//        return 2;
-//    if(g)
-//        //la liste des aretes est utilisée
-//        return 3;
-//    //la liste principale et la liste secondaire sont utilisées
-//    return 4;
-return structure;
+    //    if(aps)
+    //        //les fs,aps,poids sont utilisé
+    //        return 1;
+    //    if(M_adj)
+    //        //la matrice d'ajacence est utilisée
+    //        return 2;
+    //    if(g)
+    //        //la liste des aretes est utilisée
+    //        return 3;
+    //    //la liste principale et la liste secondaire sont utilisées
+    //    return 4;
+    return structure;
 }
 
 void Manipulateur::choisir_structure(int i){
@@ -837,7 +837,7 @@ void Manipulateur::choisir_structure(int i){
 
                     //                    }
                     //algo.all2matrix(fs,aps,poids,M_adj);
-                       // cout << "ok "<<M_adj[0][0]<<std::endl;
+                    // cout << "ok "<<M_adj[0][0]<<std::endl;
 
                     algo.del_fs_aps_poids(fs,aps,poids);
                     break;
@@ -912,8 +912,8 @@ void Manipulateur::choisir_structure(int i){
                         algo.all2matrix(fs_tmp,aps_tmp,poids,a);
                         algo.del_fs_aps_poids(fs_tmp,aps_tmp,poids);
                         if(algo.estSymetrique(a)){
-                        structure=3;
-                        algo.matrix2aretes(a,g,n,m);
+                            structure=3;
+                            algo.matrix2aretes(a,g,n,m);
                             algo.del_lists(pri);
                         }
                         else{
@@ -943,7 +943,7 @@ void Manipulateur::afficher_structure(){
         algo.affiche_fs_aps_poids(fs,aps,poids);
         break;
     case 2:
-//        cout << M_adj[0][0];
+        //        cout << M_adj[0][0];
         algo.affiche_matrice(M_adj);
 
 
@@ -961,20 +961,29 @@ void Manipulateur::afficher_structure(){
 }
 
 void Manipulateur::run(){
-    Gpx gpx =lireGPX("C:/gpx/test.gpx");
+
+    std::string fichier;
+
+    cout<<"Entrer un chemin complet vers le fichier GPX contenant le graphe \n[taper D pour accepter la valeur par defaut: C:/gpx/test.gpx]: "<<endl;
+    cin>>fichier;
+    if(fichier == "D")
+    {
+        fichier="C:/gpx/test.gpx";
+    }
+    cout << std::endl;
+    Gpx gpx =lireGPX(fichier);
     creerGraphe(gpx);
     updateGeoJSON();
 
-   // saisirLieu();
-  //  saisirArete();
+
 
     //afficher_structure();
     Algorithme algo;
     //choisir_structure(2);
     afficher_structure();
-        //cout << "\nok";
-//    initPoids();
-       // cout << "\nok";
+    //cout << "\nok";
+    //    initPoids();
+    // cout << "\nok";
     //initPoids2();
     int choix=1,choix2;
     while(choix!=0){
@@ -986,39 +995,39 @@ void Manipulateur::run(){
         cin>>choix;
         if(choix!=6){
             switch(choix){
-                case 0:
-                    return;
-                case 1:
-                    afficher_structure();
-                    break;
-                case 2:
-                    cout<<"Structure : [1] fs aps poids  [2] Matrice d'adjacent  [3] Liste d'aretes  [4] Liste principale et liste secondaire"<<endl;
-                    cout<<"Votre choix : ";
-                    cin>>choix2;
-                    choisir_structure(choix2);
-                    break;
-                case 3:
-                    saisirLieu();
-                    break;
-                case 4:
-                    saisirArete();
-                    break;
-                case 5:
-                    cout<<"Structure : [1] Pente  [2] Distance"<<endl;
-                    cout<<"Votre choix : ";
-                    cin>>choix2;
-                    choisir_structure(1);
-                    if(choix2 == 1)
-                        initPoids();
+            case 0:
+                return;
+            case 1:
+                afficher_structure();
+                break;
+            case 2:
+                cout<<"Structure : [1] fs aps poids  [2] Matrice d'adjacent  [3] Liste d'aretes  [4] Liste principale et liste secondaire"<<endl;
+                cout<<"Votre choix : ";
+                cin>>choix2;
+                choisir_structure(choix2);
+                break;
+            case 3:
+                saisirLieu();
+                break;
+            case 4:
+                saisirArete();
+                break;
+            case 5:
+                cout<<"Structure : [1] Pente  [2] Distance"<<endl;
+                cout<<"Votre choix : ";
+                cin>>choix2;
+                choisir_structure(1);
+                if(choix2 == 1)
+                    initPoids();
+                else
+                    if(choix2 == 2)
+                        initPoids2();
                     else
-                        if(choix2 == 2)
-                            initPoids2();
-                        else
-                            cout<<"1 ou 2"<<endl;
-                    break;
-                default:
-                    cout<<"Entre 1 et 6"<<endl;
-                    break;
+                        cout<<"1 ou 2"<<endl;
+                break;
+            default:
+                cout<<"Entre 1 et 6"<<endl;
+                break;
             }
         }
         else{
